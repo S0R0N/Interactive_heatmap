@@ -20,9 +20,9 @@ and open the template in the editor.
             //##                  Variables for the main layout               ##
             //##################################################################            
             var margin        = {top: 30, right: 30, bottom: 30, left: 30};// margenes
-            var b_width       = 1333 - margin.left - margin.right;         // ancho
+            var b_width       = 1600 - margin.left - margin.right;         // ancho
             var b_height      = 20000 - margin.top - margin.bottom;       // altura
-            var wrapperWidth  = Math.min(b_width, b_height) * 0.8;   // space for the network and the heatmap
+            var wrapperWidth  = Math.min(b_width, b_height) * 0.6;   // space for the network and the heatmap
             var Y_link_lenght = 100;                                    // total network size
             var link_margin   = 5;                                    // space between the heatmap and network
             var heatmapWidth  = wrapperWidth - (Y_link_lenght + link_margin);// Ancho del espacio para el heatmap
@@ -276,7 +276,8 @@ and open the template in the editor.
                                             return 'y-node '+ d.data.property_id;}
                                         )
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; })
-                                        .attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; })
+                                        //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; })
+                                        .attr('transform', function(d) { return 'translate(' + d.yLinkScaledLenght + ',' + (d.nodeY+3) + ')'; })
                                         .attr("font-family", "sans-serif")
                                         .attr("font-size", 12)
                                         .text(function(d) { return d.data.name;})
@@ -333,7 +334,8 @@ and open the template in the editor.
                                         //cursor type
                                         //
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; });
-                                        .attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; });
+                                        //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; });
+                                        .attr('transform', function(d) { return 'translate(' + d.yLinkScaledLenght + ',' + (d.nodeY+3) + ')'; });
                                 return(yNodeUpdate);
                             },function(exit){
                                 let yNodeExit = exit.remove();
