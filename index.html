@@ -138,6 +138,20 @@ and open the template in the editor.
                 }
               updateGraph(d);
             }
+            function OnMouseOverExpand(d){
+                d3.select(this).style("cursor", "zoom-in"); 
+            }
+            function OnMouseOverCollapse(d){
+                d3.select(this).style("cursor", "zoom-out"); 
+            }
+            function OnMouseOverNoMore(d){
+                d3.select(this).style("cursor", "not-allowed"); 
+            }
+    //  "mouseout": function(d) {
+      //  d3.select(this).style("cursor", "default"); 
+      
+    
+            
         //######################################################################
         //##            FIRST LOAD THE FILE AND INITALIZE STUFF               ##
         //######################################################################
@@ -185,7 +199,8 @@ and open the template in the editor.
                     
                     var nodes = data_h.descendants(),
                         links = data_h.descendants();
-                    
+                    console.log("nodes");
+                    console.log(nodes);
                     var yLink = GyLinks.selectAll('g.link') //IT IS STILL NOT WORKING, HAVE TO CONNECT THE DATA TO THE OBJECTTTTTTT
                             .data(links,function(d,i) {
                                 return d.data.property_id;
@@ -265,7 +280,7 @@ and open the template in the editor.
                                         .attr("font-family", "sans-serif")
                                         .attr("font-size", 12)
                                         .text(function(d) { return d.data.name;})
-                                        .attr('cursor', 'pointer')
+                                        //.attr('cursor', 'pointer')
                                         .style("fill", function(d) {
                                             return (d.children ? "black": "black");
                                         })
@@ -275,6 +290,19 @@ and open the template in the editor.
                                         .style("font-style", function(d) {
                                             return (d.children ? "italic": "normal");
                                         })
+                                        //cursor type
+                                        .on('mouseover', function (d){//Changing the cursor appearance 
+                                            if(d.children){
+                                                d3.select(this).style("cursor", "zoom-out");
+                                            }else{
+                                                d3.select(this).style("cursor", "zoom-in");
+                                            }
+                                            if(d.height === 0){
+                                                d3.select(this)
+                                                    .style("cursor", "not-allowed");
+                                                }
+                                            }
+                                        )
                                         .on('click', click);
                                 return(yNodeEnter);
                             },
@@ -290,7 +318,20 @@ and open the template in the editor.
                                         .style("font-style", function(d) {
                                             return (d.children ? "italic": "normal");
                                         })
-                                        
+                                        .on('mouseover', function (d){//Changing the cursor appearance 
+                                            if(d.children){
+                                                d3.select(this).style("cursor", "zoom-out");
+                                            }else{
+                                                d3.select(this).style("cursor", "zoom-in");
+                                            }
+                                            if(d.height === 0){
+                                                d3.select(this)
+                                                    .style("cursor", "not-allowed");
+                                                }
+                                            }
+                                        )
+                                        //cursor type
+                                        //
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; });
                                         .attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; });
                                 return(yNodeUpdate);
