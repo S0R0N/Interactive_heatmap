@@ -21,7 +21,7 @@ and open the template in the editor.
             //##################################################################            
             var margin        = {top: 30, right: 30, bottom: 30, left: 30};// margenes
             var b_width       = 1333 - margin.left - margin.right;         // ancho
-            var b_height      = 1000 - margin.top - margin.bottom;       // altura
+            var b_height      = 20000 - margin.top - margin.bottom;       // altura
             var wrapperWidth  = Math.min(b_width, b_height) * 0.8;   // space for the network and the heatmap
             var Y_link_lenght = 100;                                    // total network size
             var link_margin   = 5;                                    // space between the heatmap and network
@@ -54,8 +54,7 @@ and open the template in the editor.
                 .attr('transform', 'translate('+ (Y_link_lenght + link_margin) + ',' + (0) + ')');// se divide entre dos para colocarlo en la mitad
             var GLegends = legends.selectAll(".leg")
                     .data(['YES','PARTIAL','NO']);
-            console.log("GLegends");
-            console.log(GLegends);
+            
             GLegends.join(
                     function(enter){
                         let GLegendsEnter = enter.append("g")
@@ -94,6 +93,7 @@ and open the template in the editor.
             var GyNodes = heatmap.append('g')
                         .attr('class', 'yn')
                         .attr('transform','translate(' + (Y_link_lenght+ heatmapWidth + link_margin + 10) + ',' + (1e-6) + ')');//fixind the position of the labels for the boxes
+                
             var GxNodes = heatmap.append('g')
                         .attr('class', 'xn')
                         .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (heatmapWidth + 5) + ')');
@@ -138,14 +138,6 @@ and open the template in the editor.
                 }
               updateGraph(d);
             }
-            /*function get_nodes(d){
-                let output;
-                if(d.children){
-                    output = d.decenda
-                }else{
-                    output = 
-                }
-            }*/
         //######################################################################
         //##            FIRST LOAD THE FILE AND INITALIZE STUFF               ##
         //######################################################################
@@ -153,7 +145,7 @@ and open the template in the editor.
                     function(res){       
                     //Initializing root
                         console.log("raw data");
-                        console.log(res);
+                        //console.log(res);
                         data_h  = d3.hierarchy(res.property_tree,function(d){return d.children;});
                         samples = res.sample_names;
                         function setYLinkScaledLenght(d, y0, k) {
@@ -163,9 +155,6 @@ and open the template in the editor.
                             return(d);
                         }
                         setYLinkScaledLenght(data_h, data_h.depth, Y_link_lenght / data_h.height);
-                        //data_h.forEach(collapse);
-                        
-                        //data_h.children.forEach(collapse);
                         data_h.each(collapse);
                         updateGraph(data_h);
                     }
@@ -185,7 +174,8 @@ and open the template in the editor.
                     //##################################################################
                     //##            Var for to avoid overlap of the labels            ##
                     //##################################################################
-                    var nodeSpaceY = heatmapWidth/data_h.descendants().length;
+                    //var nodeSpaceY = heatmapWidth/data_h.descendants().length;
+                    var nodeSpaceY = 20;
                     var nodeSpaceX = heatmapWidth/samples.length;
                    //console.log(nodeSpaceY);
                     data_h.each(function(d){
@@ -195,7 +185,7 @@ and open the template in the editor.
                     
                     var nodes = data_h.descendants(),
                         links = data_h.descendants();
-                
+                    
                     var yLink = GyLinks.selectAll('g.link') //IT IS STILL NOT WORKING, HAVE TO CONNECT THE DATA TO THE OBJECTTTTTTT
                             .data(links,function(d,i) {
                                 return d.data.property_id;
@@ -271,7 +261,7 @@ and open the template in the editor.
                                             return 'y-node '+ d.data.property_id;}
                                         )
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; })
-                                        .attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY) + ')'; })
+                                        .attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; })
                                         .attr("font-family", "sans-serif")
                                         .attr("font-size", 12)
                                         .text(function(d) { return d.data.name;})
@@ -302,7 +292,7 @@ and open the template in the editor.
                                         })
                                         
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; });
-                                        .attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY) + ')'; });
+                                        .attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; });
                                 return(yNodeUpdate);
                             },function(exit){
                                 let yNodeExit = exit.remove();
@@ -310,7 +300,10 @@ and open the template in the editor.
                                             .attr("font-size", 0);
                             }
                         );
-                            
+                    console.log(nodeSpaceY*nodes.length);
+                    heatmap.select("g.xn")
+                            .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (nodeSpaceY*nodes.length + 5) + ')');
+                
                     var xNode = GxNodes.selectAll('g.x-node')
                         .data(samples);
                         xNode.join(
@@ -354,91 +347,80 @@ and open the template in the editor.
                             .range([0, heatmapWidth]);
                         //.range([0, 600]);
                     // Number of rows are the number of nodes, including the root. 
-                    var nRows = data_h.descendants().length;
-                    var bandY = d3.scaleBand()
+                    //var nRows     = data_h.descendants().length;
+                    //let badYwidth = 20;
+                    /*var bandY = d3.scaleBand()
                             .domain(d3.range(nRows))
-                            .range([0, heatmapWidth]);
+                            //.range([0, heatmapWidth]); //allowing the squares to expand to infinite
+                            .range([0, b_height]);*/
 
-                     var rows = table.selectAll('.row')
-                            .data(nodes,function(d) {
-                                return d.data.property_id;
-                            });
-                            rows.join(
-                                function(enter){
-                                    let rowEnter = enter.append('g')
-                                        //.attr('class', 'row')
-                                        .attr('class',function(d) {return 'row '+ d.data.property_id;})
-                                        .attr('transform', function(d, i) {
-                                            /*console.log("On row enter d.nodeY")
-                                            console.log(d.nodeY)
-                                            console.log("On row enter bandY(i)")
-                                            console.log(bandY(i))
-                                            console.log("On row enter (nodeSpaceY/2)")
-                                            console.log(nodeSpaceY/2)*/
-                                            //return 'translate(0, ' + bandY(i) + ')';
-                                            return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
-                                        });  
-                                    let rowEnterRect = rowEnter
-                                            .selectAll('rect')
-                                            .data(function(d) {
-                                                //console.log(d.data.result);
-                                                return(d.data.result);
-                                            });
-                                    rowEnterRect
-                                            .join(
-                                                function(enter){
-                                                    let rowEnterRect = enter.append('rect')
-                                                        .style('fill', function (d) {return heatColor(d);})
-                                                        .style('opacity', 0.7)
-                                                        .attr('x', function(d, i) {return bandX(i);})
-                                                        .style('stroke', '#000')
-                                                        .style('stroke-width', 1)
-                                                        .attr('width', bandX.bandwidth())
-                                                        .attr('height', bandY.bandwidth());
-                                                    return(rowEnterRect);
-                                                }
-                                            );
-                                },
-                                function(update){
-                                    //no le tengo mucha fe por la division del joing update del objeto children
-                                    //probably I have to create a group to modify these dudes 
-                                    console.log("updating row");
-                                    let rowUpdate = update;
-                                        rowUpdate
-                                            .attr('transform', function(d, i) {
-                                                /*console.log("row data on update");
-                                                console.log("On row update d.nodeY")
-                                                console.log(d.nodeY)
-                                                console.log("On row update bandY(i)")
-                                                console.log(bandY(i))
-                                                console.log("On row udpate (nodeSpaceY/2)")
-                                                console.log(nodeSpaceY/2)*/
-                                                //return 'translate(0, ' + bandY(i) + ')';
-                                                return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
-                                            });
-                                        rowUpdate.selectAll('rect')
-                                            .style('fill', function (d) {
-                                                    console.log("rect data on update");
-                                                    console.log(d);
-                                                    return heatColor(d);
-                                                })
-                                            .style('opacity', 0.7)
-                                            .attr('x', function(d, i) {return bandX(i);})
-                                            .style('stroke', '#000')
-                                            .style('stroke-width', 1)
-                                            .attr('width', bandX.bandwidth())
-                                            .attr('height', bandY.bandwidth());
-                                },
-                                function(exit){
-                                    let rowExit = exit.remove();
-                                        rowExit.selectAll("rect")
-                                            .style('stroke', '#fff')
-                                            .style('stroke-width', 1e-6)
-                                            .attr('width', 1e-6)
-                                            .attr('height', 1e-6);
-                                    return(rowExit);
-                                }
-                            );
+                    var rows = table.selectAll('.row')
+                           .data(nodes,function(d) {
+                               return d.data.property_id;
+                           });
+                    rows.join(
+                        function(enter){
+                            let rowEnter = enter.append('g')
+                                //.attr('class', 'row')
+                                .attr('class',function(d) {return 'row '+ d.data.property_id;})
+                                .attr('transform', function(d, i) {
+
+                                    return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
+                                });  
+                            let rowEnterRect = rowEnter
+                                    .selectAll('rect')
+                                    .data(function(d) {
+                                        return(d.data.result);
+                                    });
+                            rowEnterRect
+                                    .join(
+                                        function(enter){
+                                            let rowEnterRect = enter.append('rect')
+                                                .style('fill', function (d) {return heatColor(d);})
+                                                .style('opacity', 0.7)
+                                                .attr('x', function(d, i) {return bandX(i);})
+                                                .style('stroke', '#000')
+                                                .style('stroke-width', 1)
+                                                .attr('width', bandX.bandwidth())
+                                                .attr('height', nodeSpaceY);
+                                                //.attr('height', bandX.bandwidth());
+                                            return(rowEnterRect);
+                                        }
+                                    );
+                        },
+                        function(update){
+                            //no le tengo mucha fe por la division del joing update del objeto children
+                            //probably I have to create a group to modify these dudes 
+                            console.log("updating row");
+                            let rowUpdate = update;
+                                rowUpdate
+                                    .attr('transform', function(d, i) {
+                                        return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
+                                    });
+                                rowUpdate.selectAll('rect')
+                                    .style('fill', function (d) {
+                                            console.log("rect data on update");
+                                            return heatColor(d);
+                                        })
+                                    .style('opacity', 0.7)
+                                    .attr('x', function(d, i) {return bandX(i);})
+                                    .style('stroke', '#000')
+                                    .style('stroke-width', 1)
+                                    .attr('width', bandX.bandwidth())
+                                    .attr('height', nodeSpaceY);
+                                    //.attr('height', bandX.bandwidth());
+                                    //.attr('height', bandY.bandwidth());
+                        },
+                        function(exit){
+                            let rowExit = exit.remove();
+                                rowExit.selectAll("rect")
+                                    .style('stroke', '#fff')
+                                    .style('stroke-width', 1e-6)
+                                    .attr('width', 1e-6)
+                                    .attr('height', 1e-6);
+                            return(rowExit);
+                        }
+                    );
                 };
          
             
