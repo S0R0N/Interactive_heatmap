@@ -27,18 +27,19 @@ and open the template in the editor.
 //          //##################################################################
             //##                  Variables for the main layout               ##
             //##################################################################            
-            var margin             = {top: 30, right: 30, bottom: 30, left: 30};// margenes
-            var b_width            = 1000 - margin.left - margin.right;         // ancho
-            var b_height           = 1000 - margin.top - margin.bottom;       // altura
+            let margin             = {top: 30, right: 30, bottom: 30, left: 30};// margenes
+            let b_width            = 1000 - margin.left - margin.right;         // ancho
+            let b_height           = 1000 - margin.top - margin.bottom;       // altura
             let top_banner_width   = b_width;
             let top_banner_heigth  = 200;
             let sample_name_heigth = 60;
-            var wrapperWidth       = Math.min(b_width, b_height) * 0.6;   // space for the network and the heatmap
-            var Y_link_lenght      = 100;                                    // total network size
-            var link_margin        = 5;                                    // space between the heatmap and network
-            var heatmapWidth       = wrapperWidth - (Y_link_lenght + link_margin);// Ancho del espacio para el heatmap
-            var counter            = 0;
-            var at                 = 600; //milliseconds of animation
+            let navbar_heigth      = 56;
+            let wrapperWidth       = Math.min(b_width, b_height) * 0.6;   // space for the network and the heatmap
+            let Y_link_lenght      = 100;                                    // total network size
+            let link_margin        = 5;                                    // space between the heatmap and network
+            let heatmapWidth       = wrapperWidth - (Y_link_lenght + link_margin);// Ancho del espacio para el heatmap
+            let counter            = 0;
+            let at                 = 600; //milliseconds of animation
             let legend_heigth      = 40;
 
             
@@ -50,11 +51,148 @@ and open the template in the editor.
                     .style("heigth",b_height)
                     .style("overflow","scroll")
             ;*/
-            var svg1 = d3.select("body")
+            //
+            d3.select("body")
+                    .style("margin", 0+"px")
+                    .style("font-family", '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"')
+                    .style("font-size", 1+"rem")
+                    .style("font-weight",400)
+                    .style("line-heigth", 1.5)
+                    .style("color", "#212529")
+                    .style("text-align","left")
+                    .style("background-color", "#fff")
+            ;
+    //##########################################################################
+    //##                     DRAWING THE NAVIGATION BAR                       ##
+    //##########################################################################
+            let navb = d3.select("body")
+                    .append("nav")
+                        .style("box-sizing", "border-box")
+                        .style("position","fixed")
+                        .style("top",0)
+                        .style("right",0)
+                        .style("left",0)
+                        .style("z-index",1000)
+                        .style("background-color","#343a40")
+                        .style("padding-top",0.5+"rem")
+                        .style("padding-right",1+"rem")
+                        .style("padding-bottom",0.5+"rem")
+                        .style("padding-left",1+"rem")
+                        .style("align-items", "center")
+                        .style("height",navbar_heigth+"px")
+                        .style("list-style","none")
+                        
+                    //.style("width",1.5+"em")
+            ;
+            navb.append("a")
+                    .attr("href","#")
+                    .style("color","#fff")
+                    .style("display", "inline-block")
+                    .style("margin-right", 1+"rem")
+                    .style("font-size", 1.25+"rem")
+                    .style("line-height", "inherith")
+                    .style("white-space", "nowrap")
+                    .style("text-decoration", "none")
+                    .style("background-color", "transparent")
+                    .text("MicromedaViz-Interactive Heatmap")
+            ;
+            navb.append("div")
+                    .style("display","inline-block")
+                    .append("button")
+                        .attr("class", "rb")
+                        .attr("type", "button")
+                        //.attr("disabled", "true")
+                        /*.attr("data-toggle","collapse")
+                        .attr("data-target","#navBarSupportedContent")
+                        .attr("aria-controls","navbarSupportedContent")
+                        .attr("aria-expanded","false")
+                        .attr("aria-label","Toggle navigation")*/
+                        
+                        //STYLES
+                        .style("color","#28a745")
+                        .style("outline","none")
+                        .style("background-color","transparent")
+                        .style("border-width","2px")
+                        .style("border-style","double")
+                        .style("border-color","#28a745")
+                        .style("line-height", "1.5")
+                        .style("border-radius", ".25rem")
+                        .style("display","inline-block")
+                        .style("text-decoration", "none")
+
+                        // Class btn from the javascript
+                        .style("display","inline-block")
+                        .style("font-weight",400)
+                        .style("text-align","center")
+                        .style("white-space","nowrap")
+                        .style("vertical-align","middle")
+                        .style("-webkit-user-select","none")
+                        .style("-moz-user-select","none")
+                        .style("-ms-user-select","none")
+                        .style("-user-select","none")
+                        .style("padding-top", ".375rem")
+                        .style("padding-bottom", ".375rem")
+                        .style("padding-left", ".75rem")
+                        .style("padding-right", ".75rem")
+                        .style("font-size", "1rem")
+                        .text("Reset")
+                        .on('mouseover', function() {
+                            //console.log("onmouseover");
+                            navb.select(".rb")
+                                .transition()
+                                .duration(200)
+                                .style("background-color", "#28a745")
+                                .style("color","#fff");
+                            }
+                        )
+                        .on('mouseout', function() {
+                            //console.log("onmouseout");
+                            navb.select(".rb")
+                                .transition()
+                                .duration(200)
+                                .style("background-color", "transparent")
+                                .style("color","#28a745");
+                            }
+                        )
+            /*let navb2 = navb.append("div")
+                    .attr("class","collapse")
+                    .attr("id", "navbarSupportedContent")
+                    .style("display","flex")
+                    .style("-webkit-box-direction","normal")
+                    .style("flex-basis","auto")
+                    .style("-webkit-box-flex",1)
+                    .style("flex-grow",1)
+                    .style("-webkit-box-align","center")
+                    .style("align-items","center")
+                    .append("ul")
+                        .style("-webkit-box-orient","horizontal")
+                        .style("-webkit-box-direction","normal")
+                        .style("flex-direction","row")
+                        .style("margin-top",0)
+                        .style("margin-right","auto")
+                        .append("li")
+                            .style("box-sizing","border-box")
+                            .style("display","list-item")
+                            .style("text-align","-webkit-match-parent")
+                            .append("button")
+                                .attr("type","button")
+                                .style("cursor","pointer")
+                                .style("-webkit-appearance","button")
+                                .style("color","#28a745")
+                                .style("background-color","transparent")
+                                .style("background-image","none")
+                                .style("border-color","#28a745")
+                                .text("Reset")*/
+                    
+            ;
+    //##########################################################################
+    //##                     DRAWING THE TOP BANNER                           ##
+    //##########################################################################
+            let svg1 = d3.select("body")
                 .append("div")
                 .attr("class","svg1")
                 .style('position','fixed')
-                .style('top',0)
+                .style('top',(navbar_heigth+ margin.top)+"px")
                 .style("width","100%")
                 .style("z-index",10)
                 .style("background-color","rgba(255, 255, 255, 0.70")
@@ -62,12 +200,9 @@ and open the template in the editor.
                     .append("svg")
                     .attr("width", top_banner_width + margin.left + margin.right )
                     .attr("height", top_banner_heigth + margin.top + margin.bottom )
-                    /*.style("position","fixed")
-                    .style("top","0")
-                    .style("width","100%")*/
             ;
                 
-            var heatColor = d3.scaleOrdinal()
+            let heatColor = d3.scaleOrdinal()
                             .domain(['YES','PARTIAL','NO'])
                             .range(['#c51b8a','#fa9fb5','#fff'])
             ;
@@ -77,13 +212,14 @@ and open the template in the editor.
                     .attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
             ;
                     
-            var legends = top_banner_inside.append('g').attr('class', 'legends')
+            let legends = top_banner_inside.append('g').attr('class', 'legends')
                 //.attr('transform', 'translate('+ ((b_width - wrapperWidth) / 2) + ',' + ((b_height - wrapperWidth) / 2) + ')');// se divide entre dos para colocarlo en la mitad
-                .attr('transform', 'translate('+ (Y_link_lenght + link_margin) + ',' + (margin.top) + ')')// se divide entre dos para colocarlo en la mitad
+                .attr('transform', 'translate('+ (Y_link_lenght + link_margin) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
                 //Trying to make them freeze
-                ;
-            var GLegends = legends.selectAll(".leg")
-                    .data(['YES','PARTIAL','NO']);
+            ;
+            let GLegends = legends.selectAll(".leg")
+                    .data(['YES','PARTIAL','NO'])
+            ;
             
             GLegends.join(
                     function(enter){
@@ -110,20 +246,25 @@ and open the template in the editor.
                             .attr("y",legend_heigth/2)
                             .text(d =>d);
                         return(GLegendsEnter);
-                    });
+                    })
+            ;
             
-            var GxNodes = top_banner_inside.append('g')
+            let GxNodes = top_banner_inside.append('g')
                         .attr('class', 'xn')
                         //.attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (heatmapWidth + 5) + ')');
-                        .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (top_banner_heigth - sample_name_heigth) + ')');
+                        .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (top_banner_heigth - sample_name_heigth) + ')')
+            ;
             
     //Think an adaptative size of SVG canvas to draw the heatmap. 
-            var dv = d3.select("body")  
+    //##########################################################################
+    //##                   DRAWING THE TOP HEATMAP                            ##
+    //##########################################################################
+            let dv = d3.select("body")  
                 .append("div")
                 .attr("class","svg")
                 //.style("overflow","scroll")
                 .style("position","absolute")
-                .style("top",(top_banner_heigth + margin.top + margin.bottom)+"px")
+                .style("top",(navbar_heigth + top_banner_heigth + +  margin.top + margin.top + margin.bottom)+"px")
                 .style("z-index",0)
             ;
             let svg = dv
@@ -143,24 +284,27 @@ and open the template in the editor.
             // CREATING THE HEATMAP DRAWING SPACE 
             
 
-            var heatmap = svg.append('g').attr('class', 'heatmap')
+            let heatmap = svg.append('g').attr('class', 'heatmap')
                 //.attr('transform', 'translate('+ ((b_width - wrapperWidth) / 2) + ',' + ((b_height - wrapperWidth) / 2) + ')');// se divide entre dos para colocarlo en la mitad
                 //.attr('transform', 'translate('+ (0) + ',' + (legend_heigth) + ')');// se divide entre dos para colocarlo en la mitad
                 .attr('transform', 'translate('+ (0) + ',' + (0) + ')');// se divide entre dos para colocarlo en la mitad
                 
-            var GyLinks = heatmap.append('g')
+            let GyLinks = heatmap.append('g')
                     //var yLink = heatmap.append('g')
                         .attr('class', 'yl')
                         .attr('transform', 'translate(' + 1e-6 + ',' + 1e-6 + ')');
-            var GyNodes = heatmap.append('g')
+            let GyNodes = heatmap.append('g')
                         .attr('class', 'yn')
                         .attr('transform','translate(' + (Y_link_lenght+ heatmapWidth + link_margin + 10) + ',' + (1e-6) + ')');//fixind the position of the labels for the boxes
                 
             
-            var table = heatmap.append('g').attr('class', 'table')
+            let table = heatmap.append('g').attr('class', 'table')
                     // depronto me toca borrar el Y de linkheight +link_margin, porque no lo tuve en cuenta antes
                     .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (0) + ')');
                     //.attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (Y_link_lenght + link_margin) + ')');
+            //##################################################################
+            //##                   HELPER FUNCTIONS                           ##
+            //##################################################################
             function collapse(d) {
               if(d.children) {
                 d._children = d.children;
@@ -168,7 +312,7 @@ and open the template in the editor.
                 d.children = null;
               }
             }
-            var ptp = false;
+            let ptp = false;
             function get_path_to_parent(d) {
                 if(ptp ===false){
                     output = "M" + (d.yLinkScaledLenght) + "," + (d.nodeY-1) +" L"+ (d.yLinkScaledLenght) + "," + d.nodeY;
@@ -207,9 +351,6 @@ and open the template in the editor.
             function OnMouseOverNoMore(d){
                 d3.select(this).style("cursor", "not-allowed"); 
             }
-    //  "mouseout": function(d) {
-      //  d3.select(this).style("cursor", "default"); 
-
         //######################################################################
         //##            FIRST LOAD THE FILE AND INITALIZE STUFF               ##
         //######################################################################
@@ -228,10 +369,18 @@ and open the template in the editor.
                         }
                         setYLinkScaledLenght(data_h, data_h.depth, Y_link_lenght / data_h.height);
                         data_h.each(collapse);
+                        navb.select(".rb")
+                                .on("click",function(){
+                                      data_h.each(collapse);
+                                      updateGraph(data_h);
+                                    }
+                                );
                         updateGraph(data_h);
                     }
                 );
-                
+        //######################################################################
+        //##                       UDAPTE FUNCTION                            ##
+        //######################################################################
                 function updateGraph (source){
                     
                     counter = 0;
@@ -257,12 +406,21 @@ and open the template in the editor.
                     
                     var nodes = data_h.descendants(),
                         links = data_h.descendants();
+                    //console.log("nodeSpaceY*nodes.length");
+                    //console.log(nodeSpaceY*nodes.length);
                     
+                    /*let ssvg = svg.select("svg")
+                    .attr("width", b_width + margin.left + margin.right )
+                    .attr("height", nodeSpaceY*nodes.length + margin.top + margin.bottom )*/
                     svg
                         .attr("width", b_width + margin.left + margin.right )
                         .attr("height", nodeSpaceY*nodes.length + margin.top + margin.bottom )
-
+                    //.attr('transform', 'translate('+ (0) + ',' + (top_banner_heigth + margin.top + margin.bottom) + ')')
+                    //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')
                     ;
+                    //console.log("svg");
+                    //console.log(svg);
+                    
                     
                     var yLink = GyLinks.selectAll('g.link') //IT IS STILL NOT WORKING, HAVE TO CONNECT THE DATA TO THE OBJECTTTTTTT
                             .data(links,function(d,i) {
@@ -341,8 +499,8 @@ and open the template in the editor.
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; })
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; })
                                         .attr('transform', function(d) { 
-                                            console.log("d.yLinkScaledLenght");
-                                            console.log(d.yLinkScaledLenght);
+                                            //console.log("d.yLinkScaledLenght");
+                                            //console.log(d.yLinkScaledLenght);
                                             return 'translate(' + d.yLinkScaledLenght + ',' + (d.nodeY+3) + ')'; 
                                         })
                                         .attr("font-family", "sans-serif")
