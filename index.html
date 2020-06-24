@@ -6,23 +6,19 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>Interactive Heatmaps Plus Network</title>
+        <title>Interactive Heatmap</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     </head>
     
     <body>
-        <style>
-            .sticky {
-                position: fixed;
-                top: 0;
-                width: 100%
-            }
-        </style>
-        <div class="sticky">
-                
-        </div>
-        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
         <script>
 //          //##################################################################
             //##                  Variables for the main layout               ##
@@ -40,166 +36,119 @@ and open the template in the editor.
             let heatmapWidth       = wrapperWidth - (Y_link_lenght + link_margin);// Ancho del espacio para el heatmap
             let counter            = 0;
             let at                 = 600; //milliseconds of animation
-            let legend_heigth      = 40;
+            let legend_heigth      = 20;
+            //var mousePosition;                                      
+            //la posicion del mouse para el onhover
 
-            
-//var mousePosition;                                      // la posicion del mouse para el onhover
-//          
             /// CREATING THE MAIN SVG or CANVAS
-            /*d3.select("body")
-                    .style("width",b_width)
-                    .style("heigth",b_height)
-                    .style("overflow","scroll")
-            ;*/
-            //
-            d3.select("body")
-                    .style("margin", 0+"px")
+
+            let ht = d3.select("html")
+                    /*.style("margin", 0+"px")
                     .style("font-family", '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol"')
                     .style("font-size", 1+"rem")
                     .style("font-weight",400)
                     .style("line-heigth", 1.5)
                     .style("color", "#212529")
                     .style("text-align","left")
-                    .style("background-color", "#fff")
+                    .style("background-color", "#fff")*/
+            ;
+            let bo = d3.select("body")
             ;
     //##########################################################################
     //##                     DRAWING THE NAVIGATION BAR                       ##
     //##########################################################################
             let navb = d3.select("body")
                     .append("nav")
-                        .style("box-sizing", "border-box")
-                        .style("position","fixed")
-                        .style("top",0)
-                        .style("right",0)
-                        .style("left",0)
-                        .style("z-index",1000)
-                        .style("background-color","#343a40")
-                        .style("padding-top",0.5+"rem")
-                        .style("padding-right",1+"rem")
-                        .style("padding-bottom",0.5+"rem")
-                        .style("padding-left",1+"rem")
-                        .style("align-items", "center")
-                        .style("height",navbar_heigth+"px")
-                        .style("list-style","none")
-                        
-                    //.style("width",1.5+"em")
+                    .attr("class","navbar navbar-expand-lg navbar-dark bg-dark")
+                    .style('position','fixed')
+                    .style('top',0)
+                    .style("width","100%")
+                    .style("z-index",100)
             ;
+            //INTERACTIVE TITLE OF THE WEBSITE
             navb.append("a")
                     .attr("href","#")
-                    .style("color","#fff")
-                    .style("display", "inline-block")
-                    .style("margin-right", 1+"rem")
-                    .style("font-size", 1.25+"rem")
-                    .style("line-height", "inherith")
-                    .style("white-space", "nowrap")
-                    .style("text-decoration", "none")
-                    .style("background-color", "transparent")
+                    .attr("class","navbar-brand")
                     .text("MicromedaViz-Interactive Heatmap")
             ;
-            navb.append("div")
-                    .style("display","inline-block")
-                    .append("button")
-                        .attr("class", "rb")
-                        .attr("type", "button")
-                        //.attr("disabled", "true")
-                        /*.attr("data-toggle","collapse")
-                        .attr("data-target","#navBarSupportedContent")
-                        .attr("aria-controls","navbarSupportedContent")
-                        .attr("aria-expanded","false")
-                        .attr("aria-label","Toggle navigation")*/
-                        
-                        //STYLES
-                        .style("color","#28a745")
-                        .style("outline","none")
-                        .style("background-color","transparent")
-                        .style("border-width","2px")
-                        .style("border-style","double")
-                        .style("border-color","#28a745")
-                        .style("line-height", "1.5")
-                        .style("border-radius", ".25rem")
-                        .style("display","inline-block")
-                        .style("text-decoration", "none")
-
-                        // Class btn from the javascript
-                        .style("display","inline-block")
-                        .style("font-weight",400)
-                        .style("text-align","center")
-                        .style("white-space","nowrap")
-                        .style("vertical-align","middle")
-                        .style("-webkit-user-select","none")
-                        .style("-moz-user-select","none")
-                        .style("-ms-user-select","none")
-                        .style("-user-select","none")
-                        .style("padding-top", ".375rem")
-                        .style("padding-bottom", ".375rem")
-                        .style("padding-left", ".75rem")
-                        .style("padding-right", ".75rem")
-                        .style("font-size", "1rem")
-                        .text("Reset")
-                        .on('mouseover', function() {
-                            //console.log("onmouseover");
-                            navb.select(".rb")
-                                .transition()
-                                .duration(200)
-                                .style("background-color", "#28a745")
-                                .style("color","#fff");
-                            }
-                        )
-                        .on('mouseout', function() {
-                            //console.log("onmouseout");
-                            navb.select(".rb")
-                                .transition()
-                                .duration(200)
-                                .style("background-color", "transparent")
-                                .style("color","#28a745");
-                            }
-                        )
-            /*let navb2 = navb.append("div")
-                    .attr("class","collapse")
-                    .attr("id", "navbarSupportedContent")
-                    .style("display","flex")
-                    .style("-webkit-box-direction","normal")
-                    .style("flex-basis","auto")
-                    .style("-webkit-box-flex",1)
-                    .style("flex-grow",1)
-                    .style("-webkit-box-align","center")
-                    .style("align-items","center")
-                    .append("ul")
-                        .style("-webkit-box-orient","horizontal")
-                        .style("-webkit-box-direction","normal")
-                        .style("flex-direction","row")
-                        .style("margin-top",0)
-                        .style("margin-right","auto")
-                        .append("li")
-                            .style("box-sizing","border-box")
-                            .style("display","list-item")
-                            .style("text-align","-webkit-match-parent")
-                            .append("button")
-                                .attr("type","button")
-                                .style("cursor","pointer")
-                                .style("-webkit-appearance","button")
-                                .style("color","#28a745")
-                                .style("background-color","transparent")
-                                .style("background-image","none")
-                                .style("border-color","#28a745")
-                                .text("Reset")*/
-                    
+            //BUTTON TO HIDE THE RESET AND SEARCH BAR WHEN THE SCREEN IS SMALL
+            navb.append("button")
+                    .attr("class","navbar-toggler")
+                    .attr("type","button")
+                    .attr("data-toggle","collapse")
+                    .attr("data-target","#navbarSC")
+                    .attr("aria-controls","navbarSC")
+                    .attr("aria-expanded","false")
+                    .attr("aria-label","Toggle Navigation")
+                    .append("span")
+                        .attr("class","navbar-toggler-icon")
             ;
+            
+            let navbd  = navb.append("div")
+                    .attr("class","collapse navbar-collapse")
+                    .attr("id","navbarSC")
+                    .attr("position","relative")
+                    .style("z-index",50)
+            ;
+            
+            navbd
+                .append("ul")
+                        .attr("class","navbar-nav mr-auto mt-2 mt-lg-0")
+                        //.attr("class","navbar-nav mt-2 mt-lg-0")
+                        .append("li")
+                            .attr("class","nav-item")
+                            .append("button")
+                                .attr("class", "btn btn-outline-success reset rb")
+                                .attr("type", "button")
+                                .text("Reset")
+                                
+            ;
+            /*let navbdf = navbd.append("form")
+                    .attr("class","form-inline my-2")
+            ;*/
+            //let navbdfs = navbdf navbd
+            let navbdfs = navbd
+                    .append("select")//navigationbar division select
+                        .attr("class","ndfs")//nav-div-form-select
+                        .attr("name","properties")
+                        .attr("title","Property Search")
+                        .attr("tabindex",-1)
+                        .attr("aria-hidden","true")
+            ;
+            navbdfs.append("option")/* to be able to set the placeholder*/;
+           
+            let opt_names = navbdfs.append("optgroup")
+                    .attr("label","Property Names")
+                    .attr("class","ndfso_names")//nav-div-form-optiongroup-Names
+            ;
+            /*let opt_ids   = navbdfs.append("optgroup")
+                    .attr("label","Property Ids")
+                    .attr("class","ndfso_ids")//nav-div-form-optiongroup-IDs
+            ;*/
+
+
     //##########################################################################
     //##                     DRAWING THE TOP BANNER                           ##
     //##########################################################################
-            let svg1 = d3.select("body")
+            //let svg1 = d3.select("body")
+            //let svg1 = navb
+            let svg1 = bo
                 .append("div")
                 .attr("class","svg1")
+                //.style('position','relative')
                 .style('position','fixed')
-                .style('top',(navbar_heigth+ margin.top)+"px")
+                .style('top',(navbar_heigth)+"px")
                 .style("width","100%")
-                .style("z-index",10)
+                .style("z-index",2)
                 .style("background-color","rgba(255, 255, 255, 0.70")
                 //.attr("transform", "translate("+ (0) + "," + (10) + ")")// se divide entre dos para colocarlo en la mitad
                     .append("svg")
-                    .attr("width", top_banner_width + margin.left + margin.right )
-                    .attr("height", top_banner_heigth + margin.top + margin.bottom )
+                        //.style('position','fixed')
+                        .style('position','relative')
+                        .style("z-index",2)
+                        //.style("background-color","rgba(255, 255, 255, 0.70")
+                        .attr("width", top_banner_width + margin.left + margin.right )
+                        .attr("height", top_banner_heigth + margin.top + margin.bottom )
             ;
                 
             let heatColor = d3.scaleOrdinal()
@@ -214,7 +163,7 @@ and open the template in the editor.
                     
             let legends = top_banner_inside.append('g').attr('class', 'legends')
                 //.attr('transform', 'translate('+ ((b_width - wrapperWidth) / 2) + ',' + ((b_height - wrapperWidth) / 2) + ')');// se divide entre dos para colocarlo en la mitad
-                .attr('transform', 'translate('+ (Y_link_lenght + link_margin) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+                .attr('transform', 'translate('+ (Y_link_lenght + link_margin) + ',' + (margin.top+ 60) + ')')// se divide entre dos para colocarlo en la mitad
                 //Trying to make them freeze
             ;
             let GLegends = legends.selectAll(".leg")
@@ -264,7 +213,7 @@ and open the template in the editor.
                 .attr("class","svg")
                 //.style("overflow","scroll")
                 .style("position","absolute")
-                .style("top",(navbar_heigth + top_banner_heigth + +  margin.top + margin.top + margin.bottom)+"px")
+                .style("top",(navbar_heigth + 60 + top_banner_heigth + +  margin.top + margin.top + margin.bottom)+"px")
                 .style("z-index",0)
             ;
             let svg = dv
@@ -312,6 +261,22 @@ and open the template in the editor.
                 d.children = null;
               }
             }
+            /*function exploreTree(d, t) {
+                let alreadyExpanded = d.decendants().filter(function(d));
+                if(d._children) {
+                    output = d._children;
+                    //d.children = d._children;
+                    output + d._children.forEach(exploreTree);
+                //d.children = null;
+                }else{
+                    if(d.children){
+                        output = d.children;
+                        //d.children = d._children;
+                        output + d.children.forEach(exploreTree);
+                    }
+                    //output = output;
+                }
+            }*/
             let ptp = false;
             function get_path_to_parent(d) {
                 if(ptp ===false){
@@ -351,6 +316,50 @@ and open the template in the editor.
             function OnMouseOverNoMore(d){
                 d3.select(this).style("cursor", "not-allowed"); 
             }
+            function expandAllParents(d){
+                //console.log("d parents to expand");
+                if(d._children){
+                    //expand
+                    d.children = d._children;
+                    d._children = null;
+                }else{
+                    //console.log("something wrong happened this is the d");
+                }
+                if(d.parent){
+                    /*console.log("d.expandAllParents()");
+                    console.log(d.parent);*/
+                    expandAllParents(d.parent);
+                }else{
+                    //console.log("no more parents, termine");
+                }
+            }
+            //let gfc = 0;
+            function getFilteredData(d,t) {
+                let i;
+                let o;
+                for (i = 0; i < d.length; i++) {
+                    //if dt._children aplicales el filter
+                    if(d[i]._children){
+                        //console.log("it has _children, gotta expand");
+                        o =  d[i]._children.filter(function(dt1){
+                            return dt1.data.name === t;
+                        });
+                        // if o vacio aplicale esta funcion a los elementos de _children. 
+                        if(o.length>0){
+                            //expand the node and its parents 
+                            expandAllParents(o[0]);
+                            break;
+                        }else{
+                            //Check if their are steps, if they are steps do not expand more. 
+                            o = getFilteredData(d[i]._children,t);
+                        }
+                    }else{
+                        //continues - it can be an already expanded or a step 
+                        continue;
+                    }
+                }
+                return o;
+            }
         //######################################################################
         //##            FIRST LOAD THE FILE AND INITALIZE STUFF               ##
         //######################################################################
@@ -361,6 +370,7 @@ and open the template in the editor.
                         //console.log(res);
                         data_h  = d3.hierarchy(res.property_tree,function(d){return d.children;});
                         samples = res.sample_names;
+                        
                         function setYLinkScaledLenght(d, y0, k) {
                             //d.yLinkScaledY = (y0 += d.depth) * k;
                             d.yLinkScaledLenght = (y0= (1+d.depth)) * k; //like an X distribution of the links in the Y axis network
@@ -368,13 +378,85 @@ and open the template in the editor.
                             return(d);
                         }
                         setYLinkScaledLenght(data_h, data_h.depth, Y_link_lenght / data_h.height);
-                        data_h.each(collapse);
-                        navb.select(".rb")
-                                .on("click",function(){
-                                      data_h.each(collapse);
-                                      updateGraph(data_h);
+                        
+                        opt_names.selectAll(".ndfso_names_options")
+                            .data(data_h.descendants().slice(0, 100))
+                            .enter()
+                            .append("option")
+                                .attr("class","ndfso_names_options")
+                                .attr("value",function(d){
+                                        return "name-"+d.data.name;
                                     }
-                                );
+                                )
+                                .text(function(d){
+                                        return d.data.name;
+                                    }
+                                )
+                        ;
+                        //Initializing the selection form
+                        $(document).ready(function() {
+                            $('.ndfs').select2({
+                                placeholder: 'Select an option',
+                                width: '818px'
+                            })
+                            .on("select2:select", function(evt){
+                                    //Conecting the select to the hierarchical dataset
+                                    let tofind = evt.params.data.text;
+                                    // searching the selected function on the hierchical dataset
+                                    let testf = data_h.descendants().filter(function(d){
+                                        return d.data.name ===tofind;
+                                    });
+                                    // if the selected item is not expanded then expand it
+                                    if(testf.length>0){
+                                    // if the selected item is expanded it will find it and save it to testf
+                                    }else{
+                                    // if the selected item is not expanded it will find it expand its parents and return it
+                                        testf = getFilteredData(data_h.descendants(),tofind);
+                                    }
+                                    //after finding the selected item, refresh the heatmap
+                                    updateGraph(data_h);
+                                    // animate the scroll to the item and the color of the selected item. 
+                                    let tar = d3.selectAll("."+testf[0].data.property_id)
+                                        .select(".y-node")
+                                        .style("fill", "blue")
+                                    ;    
+                                    d3.transition()
+                                        .duration(750)
+                                        .tween("scroll", scrollTween(testf[0].nodeY))
+                                        .transition()
+                                            .duration(1500)
+                                            .tween("selected_text", borderTween("black"))
+                                    ;
+                                    function borderTween(target) {
+                                        return function() {
+
+                                        let ip = d3.interpolateRgb(tar.style("fill"),target);
+                                        return function(t) { 
+                                            //scrollTo(0, ip(t)); 
+                                            tar.style("fill",ip(t));
+                                            //change the object's color';
+                                        };
+                                      };
+                                    } 
+                                    function scrollTween(offset) {
+                                      return function() {
+                                        let ip = d3.interpolateNumber(window.pageYOffset || document.scrollingElement.scrollTop, offset);
+                                        return function(t) { scrollTo(0, ip(t)); };
+                                      };
+                                    }    
+
+                                }
+                            );
+                        });
+                        //Initializing the reset button
+                        navb.select(".rb")
+                            .on("click",function(){
+                                  data_h.each(collapse);
+                                  updateGraph(data_h);
+                                }
+                            )
+                        ;
+                        data_h.each(collapse);
                         updateGraph(data_h);
                     }
                 );
@@ -382,7 +464,6 @@ and open the template in the editor.
         //##                       UDAPTE FUNCTION                            ##
         //######################################################################
                 function updateGraph (source){
-                    
                     counter = 0;
                     data_h.eachBefore(function(d){
                         d.id = counter;
@@ -678,9 +759,8 @@ and open the template in the editor.
                             return(rowExit);
                         }
                     );
-                };
-         
-            
+                    
+                };            
         </script>
     </body>
 </html>
