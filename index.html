@@ -37,6 +37,7 @@ and open the template in the editor.
             let counter            = 0;
             let at                 = 600; //milliseconds of animation
             let legend_heigth      = 20;
+            
             //var mousePosition;                                      
             //la posicion del mouse para el onhover
 
@@ -153,7 +154,8 @@ and open the template in the editor.
                 
             let heatColor = d3.scaleOrdinal()
                             .domain(['YES','PARTIAL','NO'])
-                            .range(['#c51b8a','#fa9fb5','#fff'])
+                            //.range(['#c51b8a','#fa9fb5','#fff'])
+                            .range(['#6c6c6c','#cecece','white']);
             ;
                     
             let top_banner_inside = svg1.append('g')
@@ -261,22 +263,6 @@ and open the template in the editor.
                 d.children = null;
               }
             }
-            /*function exploreTree(d, t) {
-                let alreadyExpanded = d.decendants().filter(function(d));
-                if(d._children) {
-                    output = d._children;
-                    //d.children = d._children;
-                    output + d._children.forEach(exploreTree);
-                //d.children = null;
-                }else{
-                    if(d.children){
-                        output = d.children;
-                        //d.children = d._children;
-                        output + d.children.forEach(exploreTree);
-                    }
-                    //output = output;
-                }
-            }*/
             let ptp = false;
             function get_path_to_parent(d) {
                 if(ptp ===false){
@@ -333,30 +319,23 @@ and open the template in the editor.
                     //console.log("no more parents, termine");
                 }
             }
-            //let gfc = 0;
-            function getFilteredData(d,t) {
-                let i;
-                let o;
-                for (i = 0; i < d.length; i++) {
-                    //if dt._children aplicales el filter
-                    if(d[i]._children){
-                        //console.log("it has _children, gotta expand");
-                        o =  d[i]._children.filter(function(dt1){
-                            return dt1.data.name === t;
-                        });
-                        // if o vacio aplicale esta funcion a los elementos de _children. 
-                        if(o.length>0){
-                            //expand the node and its parents 
-                            expandAllParents(o[0]);
-                            break;
-                        }else{
-                            //Check if their are steps, if they are steps do not expand more. 
-                            o = getFilteredData(d[i]._children,t);
-                        }
+            let o;
+            let tofind;
+            function getFilteredData(d) {
+                //if(d.data.name.toLowerCase().replace(/\s+/g, '').replace(/[^\w\s]/gi, '') === tofind.toLowerCase().replace(/\s+/g, '').replace(/[^\w\s]/gi, '')){
+                if(d.idx === tofind){
+                    //console.log("match");
+                    o = d;
+                    expandAllParents(o);
+                }else{
+                   // console.log("did not find it search children");
+                    if(d._children){
+                        d._children.forEach(getFilteredData);
+
                     }else{
-                        //continues - it can be an already expanded or a step 
-                        continue;
+                        //console.log("este nodo no tiene unexpanded children");
                     }
+                    
                 }
                 return o;
             }
@@ -370,22 +349,29 @@ and open the template in the editor.
                         //console.log(res);
                         data_h  = d3.hierarchy(res.property_tree,function(d){return d.children;});
                         samples = res.sample_names;
-                        
-                        function setYLinkScaledLenght(d, y0, k) {
+                        counter = 0;
+                        function initCustomVars(d, y0, k) {
                             //d.yLinkScaledY = (y0 += d.depth) * k;
+                            counter++;
+                            let h = d.data.property_id?d.data.property_id:d.data.step_id;// the name, lowecase and with no spaces. 
                             d.yLinkScaledLenght = (y0= (1+d.depth)) * k; //like an X distribution of the links in the Y axis network
-                            if (d.children) d.children.forEach(function(d) { setYLinkScaledLenght(d, y0, k); });
+                            d.idx = d.data.name.toLowerCase().replace(/\s+/g, '').replace(/[^\w\s]/gi, '')+h+counter ;
+                            if (d.children) d.children.forEach(function(d) { initCustomVars(d, y0, k); });
                             return(d);
                         }
-                        setYLinkScaledLenght(data_h, data_h.depth, Y_link_lenght / data_h.height);
-                        
+                        counter = 0;
+                        initCustomVars(data_h, data_h.depth, Y_link_lenght / data_h.height);
+                        //console.log("data_h");
+                        //console.log(data_h);
                         opt_names.selectAll(".ndfso_names_options")
-                            .data(data_h.descendants().slice(0, 100))
+                            //.data(data_h.descendants().slice(0, 100))
+                            .data(data_h.descendants())
                             .enter()
                             .append("option")
                                 .attr("class","ndfso_names_options")
                                 .attr("value",function(d){
-                                        return "name-"+d.data.name;
+                                        //return "name-"+d.idx;
+                                        return d.idx;
                                     }
                                 )
                                 .text(function(d){
@@ -393,36 +379,43 @@ and open the template in the editor.
                                     }
                                 )
                         ;
-                        //Initializing the selection form
                         $(document).ready(function() {
                             $('.ndfs').select2({
                                 placeholder: 'Select an option',
-                                width: '818px'
+                                width: '818px',
+                                //data: s2dt,
+                                minimumInputLength: 3
                             })
                             .on("select2:select", function(evt){
                                     //Conecting the select to the hierarchical dataset
-                                    let tofind = evt.params.data.text;
+                                    //tofind = evt.params.data.text;
+                                    tofind = evt.params.data.id;
+                                    //console.log("evt.params.data");
+                                    //console.log(evt.params.data);
                                     // searching the selected function on the hierchical dataset
-                                    let testf = data_h.descendants().filter(function(d){
-                                        return d.data.name ===tofind;
-                                    });
-                                    // if the selected item is not expanded then expand it
-                                    if(testf.length>0){
-                                    // if the selected item is expanded it will find it and save it to testf
-                                    }else{
                                     // if the selected item is not expanded it will find it expand its parents and return it
-                                        testf = getFilteredData(data_h.descendants(),tofind);
-                                    }
+                                    //let testf = getFilteredData(data_h.descendants(),tofind);
+                                    data_h.descendants().forEach(getFilteredData);
+                                    /*console.log("o");                            
+                                    console.log(o);*/
+                                    
                                     //after finding the selected item, refresh the heatmap
                                     updateGraph(data_h);
                                     // animate the scroll to the item and the color of the selected item. 
-                                    let tar = d3.selectAll("."+testf[0].data.property_id)
+                                    console.log("o.idx");
+                                    console.log(o.idx);
+                                    let tar = d3.selectAll("."+o.idx)
                                         .select(".y-node")
                                         .style("fill", "blue")
-                                    ;    
+                                    ;
+                                    //console.log("testf.data.name");
+                                    //console.log(o.idx);
+                                    //console.log("tar");
+                                    //console.log(tar);
+                                    
                                     d3.transition()
                                         .duration(750)
-                                        .tween("scroll", scrollTween(testf[0].nodeY))
+                                        .tween("scroll", scrollTween(o.nodeY))
                                         .transition()
                                             .duration(1500)
                                             .tween("selected_text", borderTween("black"))
@@ -505,7 +498,7 @@ and open the template in the editor.
                     
                     var yLink = GyLinks.selectAll('g.link') //IT IS STILL NOT WORKING, HAVE TO CONNECT THE DATA TO THE OBJECTTTTTTT
                             .data(links,function(d,i) {
-                                return d.data.property_id;
+                                return d.idx;
                             });
                     //##################################################################
                     //##                     DRAWING THE NETWORK                      ##
@@ -515,11 +508,11 @@ and open the template in the editor.
                                 var yLinkEnter = enter
                                         .append("g")
                                         .attr('class',function(d) {
-                                            return 'link '+ d.data.property_id;}
+                                            return 'link '+ d.idx;}
                                         );
                                 yLinkEnter
                                         .append("path")
-                                        .attr('class',function(d) {return 'link '+ d.data.property_id;})
+                                        .attr('class',function(d) {return 'link '+ d.idx;})
                                         .style('fill', 'none')
                                         .style('stroke', '#000')
                                         .style('stroke-width', 1)
@@ -527,7 +520,7 @@ and open the template in the editor.
                                                 return get_path_to_parent(d);
                                             });
                                     yLinkEnter.append("circle")
-                                        .attr('class',function(d) {return 'link '+ d.data.property_id;})
+                                        .attr('class',function(d) {return 'link '+ d.idx;})
                                         .attr('r', 2)
                                         .attr("transform", function(d) {
                                           return "translate(" + d.yLinkScaledLenght + "," + d.nodeY + ")";
@@ -564,18 +557,18 @@ and open the template in the editor.
                         
                     var yNode = GyNodes.selectAll('g.y-node')
                             .data(nodes,function(d) {
-                                return d.data.property_id;
+                                return d.idx;
                             });
                         yNode.join(
                             function(enter){
                                 let yNodeEnter = enter
                                         .append("g")
                                         .attr('class',function(d) {
-                                            return 'y-node '+ d.data.property_id;}
+                                            return 'y-node '+ d.idx;}
                                         );
                                     yNodeEnter.append("text")
                                         .attr('class',function(d) {
-                                            return 'y-node '+ d.data.property_id;}
+                                            return 'y-node '+ d.idx;}
                                         )
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; })
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; })
@@ -694,13 +687,13 @@ and open the template in the editor.
 
                     var rows = table.selectAll('.row')
                            .data(nodes,function(d) {
-                               return d.data.property_id;
+                               return d.idx;
                            });
                     rows.join(
                         function(enter){
                             let rowEnter = enter.append('g')
                                 //.attr('class', 'row')
-                                .attr('class',function(d) {return 'row '+ d.data.property_id;})
+                                .attr('class',function(d) {return 'row '+ d.idx;})
                                 .attr('transform', function(d, i) {
 
                                     return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
