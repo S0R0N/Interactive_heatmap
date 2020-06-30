@@ -83,7 +83,7 @@ and open the template in the editor.
     //##########################################################################
             let navb = d3.select("body")
                     .append("nav")
-                    .attr("class","navbar navbar-expand-lg navbar-dark bg-dark")
+                    .attr("class","navbar navbar-expand-lg navbar-light bg-light")
                     .style('position','fixed')
                     .style('top',0)
                     .style("width","100%")
@@ -93,7 +93,7 @@ and open the template in the editor.
             navb.append("a")
                     .attr("href","#")
                     .attr("class","navbar-brand")
-                    .text("MicromedaViz-Interactive Heatmap")
+                    .text("Interactive Heatmap")
             ;
             //BUTTON TO HIDE THE RESET AND SEARCH BAR WHEN THE SCREEN IS SMALL
             navb.append("button")
