@@ -14,9 +14,6 @@ and open the template in the editor.
     </head>
     
     <body>
-        <div class="tooltip">Hover over me
-        <span class="tooltiptext">Tooltip text</span>
-        </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
@@ -118,41 +115,37 @@ and open the template in the editor.
                     .style("z-index",50)
             ;
             //reset all button
-            navbd
-                .append("ul")
-                        .attr("class","navbar-nav mr-auto mt-2 mt-lg-0")
-                        .append("li")
-                            .attr("class","nav-item")
-                            .append("button")
-                                .attr("class", "btn btn-outline-success reset rb")
-                                .attr("type", "button")
-                                .text("Reset")
+            let navbd_ul = navbd
+                    .append("ul")
+                            .attr("class","navbar-nav mr-auto mt-2 mt-lg-0");
+            navbd_ul    
+                    .append("li")
+                        .attr("class","nav-item")
+                        .append("button")
+                            .attr("class", "btn btn-outline-success reset rb")
+                            .attr("type", "button")
+                            .text("Reset")
             ;
             //expand all button
-             navbd
-                .append("ul")
-                        .attr("class","navbar-nav mr-auto mt-2 mt-lg-0")
-                        .append("li")
-                            .attr("class","nav-item")
-                            .append("button")
-                                .attr("class", "btn btn-outline-success reset eab")
-                                .attr("type", "button")
-                                .text("Expand All <Caution!>")
-                                .on("mouseover",function(){
-                                        //console.log("I am all over the expan all button");
-                                        //console.log(this.getBoundingClientRect().height);
-                                        //console.log(evt);
-                                        tt1
-                                        .style("visibility","visible")
-                                        .style("top",(this.getBoundingClientRect().top + this.getBoundingClientRect().height+ 3)+"px")
-                                        .style("left",(this.getBoundingClientRect().left + this.getBoundingClientRect().width/2)+"px")
-                                    ;
-                                    }
-                                )
-                                .on("mouseout",function(){
-                                    tt1
-                                        .style("visibility","hidden");
-                                })
+             navbd_ul
+                    .append("li")
+                        .attr("class","nav-item")
+                        .append("button")
+                            .attr("class", "btn btn-outline-success reset eab")
+                            .attr("type", "button")
+                            .text("Expand All<!>")
+                            .on("mouseover",function(){
+                                tt1
+                                    .style("visibility","visible")
+                                    .style("top",(this.getBoundingClientRect().top + this.getBoundingClientRect().height+ 3)+"px")
+                                    .style("left",(this.getBoundingClientRect().left + this.getBoundingClientRect().width/2)+"px")
+                                ;
+                                }
+                            )
+                            .on("mouseout",function(){
+                                tt1
+                                    .style("visibility","hidden");
+                            })
             ;
 
             //let navbdfs = navbdf navbd
@@ -793,7 +786,7 @@ and open the template in the editor.
                                 let xNodeUpdate = update;
                                     xNodeUpdate.select("text.x-node")
                                         //.attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + 0 + ")"; });
-                                        .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; })
+                                        .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; });
                                 return(xNodeUpdate);
                             },function(exit){
                                 let xNodeExit = exit.remove();
