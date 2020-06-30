@@ -9,6 +9,7 @@ and open the template in the editor.
         <title>Interactive Heatmap</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" type="image/png" href="https://imagizer.imageshack.com/img923/5444/WSvDT8.png"/>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
     </head>
@@ -215,12 +216,8 @@ and open the template in the editor.
             
             //let legends = top_banner_inside.append('g')
             let legends = svg1.append('g')
-            //let legends = svg1.append('div')
                     .attr('class', 'legends')
-                //.attr('transform', 'translate('+ ((b_width - wrapperWidth) / 2) + ',' + ((b_height - wrapperWidth) / 2) + ')');// se divide entre dos para colocarlo en la mitad
-                    //.attr('transform', 'translate('+ (margin.left) + ',' + (margin.top+ 60) + ')')// se divide entre dos para colocarlo en la mitad
                     .attr('transform', 'translate('+ (margin.left) + ',' + (margin.top+ 60) + ')')// se divide entre dos para colocarlo en la mitad
-                //Trying to make them freeze
             ;
             let GLegends = legends.selectAll(".leg")
                     .data(['YES','PARTIAL','NO'])
@@ -242,8 +239,7 @@ and open the template in the editor.
                             //x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
                             .attr("x",0)
                             .attr("y",function(d,i) {
-                                    //return ((i*legend_h)+((i*legend_h)*(3/4)) );
-                                    return ((i*legend_h));
+                                    return ((i*legend_h)+10);
                                 }
                             )
                             .attr("fill",d => heatColor(d))
@@ -255,7 +251,7 @@ and open the template in the editor.
                             //.style("text-anchor","start")
                             .style("font-size","12px")
                             .attr("y",function(d,i) {
-                                    return ((i*legend_h)+((legend_h)*(3/4)) );
+                                    return ((i*legend_h)+((legend_h)*(3/4))+10 );
                                 }
                             )
                             //.style("x",legend_h*2)
