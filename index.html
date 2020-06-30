@@ -90,11 +90,18 @@ and open the template in the editor.
                     .style("z-index",100)
             ;
             //INTERACTIVE TITLE OF THE WEBSITE
+            navb.append("img")
+                        .attr("src",'https://imagizer.imageshack.com/img924/2927/rgQ28R.png')
+                        .attr("class","d-inline-block align-top")
+            ;
             navb.append("a")
                     .attr("href","#")
                     .attr("class","navbar-brand")
-                    .text("Interactive Heatmap")
+                    .style("margin-left","1rem")
+                    .text("Interactive Heatmap");
             ;
+            
+            
             //BUTTON TO HIDE THE RESET AND SEARCH BAR WHEN THE SCREEN IS SMALL
             navb.append("button")
                     .attr("class","navbar-toggler")
