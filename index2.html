@@ -77,7 +77,7 @@ and open the template in the editor.
                     .style("border-radius","6px")
                     .style("position","fixed")
                     .style("z-index","101")
-                    .text("When the heatmap is completely expanded, the site's response becomes slow")
+                    .text("You will have to wait around 5-8 seconds")
             ;
     //##########################################################################
     //##                     DRAWING THE NAVIGATION BAR                       ##
@@ -122,126 +122,26 @@ and open the template in the editor.
                     .attr("position","relative")
                     .style("z-index",50)
             ;
-            // HEre goes the elemetns of the collapsive navbar
-            let navbdi = navbd.append("ul")
-                .attr("class","nav navbar-nav")
-            ;
-            navbdi
-                .append("li")
-                .attr("class","nav-item")
-                    .append("a")
-                    .attr("class","nav-link")
-                    .attr("href","/index2.html")
-                    .text("Version2")
-            ;
-            navbdi
-                .append("li")
-                .attr("class","nav-item active")
-                    .append("a")
-                    .attr("class","nav-link")
-                    .attr("href","/index.html")
-                    .text("Version1")
-            ;
-            /*let opt_ids   = navbdfs.append("optgroup")
-                    .attr("label","Property Ids")
-                    .attr("class","ndfso_ids")//nav-div-form-optiongroup-IDs
-            ;*/
-    
-    //##########################################################################
-    //##                           DRAWING FOOTER                             ##
-    //##########################################################################
-             let foot = d3.select("body")
-                    .append("footer")
-                    .attr("class","footer bg-light")
-                    .style('position','fixed')
-                    .style('bottom',0)
-                    .style("width","100%")
-                    .style("height","20px")
-                    .style("z-index",100)
-                        .append("div")
-                        .attr("class","fc")
-                        .style("width","auto")
-                        .style("text-align","center")
-                            .append("p")
-                            .attr("class","pfc")
-                            .style("color","#777")
-                            .style("margin","0")
-                            .text("Lab Name here")
-            ;
-    //##########################################################################
-    //##                 DRAWING GENERAL CONTENT CONTAINER(gcc)               ##
-    //##########################################################################
-            let gcc = bo
-                .append("div")
-                .attr("class","gcc")
-                .style("display","flex")
-                .style("width","100%")
-                .style("position","fixed")
-                .style("top","0")
-                .style("bottom","0")
-                .style("margin-bottom","20px")
-                //.style('top',(navbar_h)+"px")
-                .style("margin-top",(navbar_h)+"px")
-            ;
-    //##########################################################################
-    //##                     DRAWING  SIDE BAR (sdb)                          ##
-    //##########################################################################    
-            let sdb = gcc
-                .append("div")
-                .attr("class","sdb")
-                
-                .style("width","300px")
-                .style("min-width","300px")
-                .style("height","auto")
-                .style("padding","15px")
-                .style("padding-bottom","0")
-                .style("border-right-width","thin")
-                .style("border-right-style","solid")
-                .style("border-right-color","rgb(221,221,221)")
-                .style("overflow-y","scroll")
-                .style("overflow-x","hidden")
-            ;
-            //Adding the search select
-            let sbdfs = sdb
-                    .append("select")//navigationbar division select
-                        .attr("class","ndfs select2-hidden-accessible")//nav-div-form-select
-                        .attr("name","properties")
-                        .attr("title","Property Search")
-                        .attr("tabindex",-1)
-                        .style("width","100%")
-                        .attr("aria-hidden","true")
-            ;
-            sbdfs.append("option")/* to be able to set the placeholder*/;
-           
-            let opt_names = sbdfs.append("optgroup")
-                    .attr("label","Property Names")
-                    .attr("class","ndfso_names")
-                    //nav-div-form-optiongroup-Names
-                    //.style("width","200px")
-            ;
-            
-            sdb.append("hr");
-            //Adding the buttons
-             //reset all button
-            let navbd_ul = sdb
+            //reset all button
+            let navbd_ul = navbd
                     .append("ul")
-                            .attr("class","nav nav-tabs");
+                            .attr("class","navbar-nav mr-auto mt-2 mt-lg-0");
             navbd_ul    
                     .append("li")
-                        .attr("class","nav-item ml-auto")
+                        .attr("class","nav-item")
                         .append("button")
-                            .attr("class", "btn btn-outline-success btn-sm rb")
+                            .attr("class", "btn btn-outline-success reset rb")
                             .attr("type", "button")
                             .text("Reset")
             ;
             //expand all button
              navbd_ul
                     .append("li")
-                        .attr("class","nav-item mr-auto")
+                        .attr("class","nav-item")
                         .append("button")
-                            .attr("class", "btn btn-outline-success btn-sm eab")
+                            .attr("class", "btn btn-outline-success reset eab")
                             .attr("type", "button")
-                            .text("Expand all")
+                            .text("Expand All<!>")
                             .on("mouseover",function(){
                                 tt1
                                     .style("visibility","visible")
@@ -255,27 +155,34 @@ and open the template in the editor.
                                     .style("visibility","hidden");
                             })
             ;
-            //sdb.text("hi");
-            //sdbf.append the search box
-    //##########################################################################
-    //##                 DRAWING  MAIN CONTENT (mct)                          ##
-    //##########################################################################
-            let mct = gcc
-                    .append("div")
-                    .attr("class","mct")
-                    .style("width","100%")
-                    .style("height","auto")
-                    .style("position","relative")
-                    .style("box-shadow","0 0 5px 3px rgba(0,0,0,0.25) inset")
-                    .style("overflow-y","scroll")
+
+            //let navbdfs = navbdf navbd
+            let navbdfs = navbd
+                    .append("select")//navigationbar division select
+                        .attr("class","ndfs")//nav-div-form-select
+                        .attr("name","properties")
+                        .attr("title","Property Search")
+                        .attr("tabindex",-1)
+                        .attr("aria-hidden","true")
             ;
-    
+            navbdfs.append("option")/* to be able to set the placeholder*/;
+           
+            let opt_names = navbdfs.append("optgroup")
+                    .attr("label","Property Names")
+                    .attr("class","ndfso_names")//nav-div-form-optiongroup-Names
+            ;
+            /*let opt_ids   = navbdfs.append("optgroup")
+                    .attr("label","Property Ids")
+                    .attr("class","ndfso_ids")//nav-div-form-optiongroup-IDs
+            ;*/
+
+
     //##########################################################################
-    //##                   DRAWING THE LEGEND CONTAINER                       ##
+    //##                     DRAWING THE TOP BANNER                           ##
     //##########################################################################
             //let svg1 = d3.select("body")
             //let svg1 = navb
-            let svg1 = mct
+            let svg1 = bo
                 .append("div")
                 .attr("class","svg1")
                 //.style('position','relative')
@@ -294,6 +201,8 @@ and open the template in the editor.
                         .attr("height", svg1_h)
             ;
             
+
+                
             let heatColor = d3.scaleOrdinal()
                             .domain(['YES','PARTIAL','NO'])
                             //.range(['#c51b8a','#fa9fb5','#fff'])
@@ -362,8 +271,7 @@ and open the template in the editor.
     //##########################################################################
     //##                   DRAWING THE TOP HEATMAP                            ##
     //##########################################################################
-            //let dv = d3.select("body")  
-            let dv = mct
+            let dv = d3.select("body")  
                 .append("div")
                 .attr("class","svg")
                 //.style("overflow","scroll")
@@ -521,8 +429,6 @@ and open the template in the editor.
                         }
                         counter = 0;
                         initCustomVars(data_h, data_h.depth, Y_link_lenght / data_h.height);
-                        var nodeSpaceX = heatmapWidth/samples.length;
-                        
                         //console.log("data_h");
                         //console.log(data_h);
                         opt_names.selectAll(".ndfso_names_options")
@@ -531,7 +437,6 @@ and open the template in the editor.
                             .enter()
                             .append("option")
                                 .attr("class","ndfso_names_options")
-                                //.style("width","200px")
                                 .attr("value",function(d){
                                         //return "name-"+d.idx;
                                         return d.idx;
@@ -542,43 +447,10 @@ and open the template in the editor.
                                     }
                                 )
                         ;
-                        var xNode = GxNodes.selectAll('g.x-node')
-                        .data(samples);
-                        xNode.join(
-                            function(enter){
-                                let xNodeEnter = enter
-                                        .append("g")
-                                        .attr('class',"x-node");
-                                    xNodeEnter.append("text")
-                                        .attr('class',"x-node")
-                                        .style("text-anchor", 'start')
-                                        .attr("font-family", "sans-serif")
-                                        .attr("font-size", 12)
-                                        .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; })
-                                        
-                                        //.style("text-orientation","sideways")
-                                        //.attr("writing-mode","sideways-rl")
-                                        .text(function(d) { return d; })
-                                    ;
-                                return(xNodeEnter);
-                            },
-                            function(update){
-                                let xNodeUpdate = update;
-                                    xNodeUpdate.select("text.x-node")
-                                        //.attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + 0 + ")"; });
-                                        .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; });
-                                return(xNodeUpdate);
-                            },function(exit){
-                                let xNodeExit = exit.remove();
-                                    xNodeExit.select("text.x-node")
-                                            .attr("font-size", 0);
-                            }
-                        );
                         $(document).ready(function() {
                             $('.ndfs').select2({
                                 placeholder: 'Select an option',
-                                width: 'resolve',
-                                //width: '818px',
+                                width: '818px',
                                 //data: s2dt,
                                 minimumInputLength: 3
                             })
@@ -592,8 +464,8 @@ and open the template in the editor.
                                     // if the selected item is not expanded it will find it expand its parents and return it
                                     //let testf = getFilteredData(data_h.descendants(),tofind);
                                     data_h.descendants().forEach(getFilteredData);
-                                    //console.log("o");                            
-                                    //console.log(o);
+                                    /*console.log("o");                            
+                                    console.log(o);*/
                                     
                                     //after finding the selected item, refresh the heatmap
                                     updateGraph(data_h);
@@ -608,11 +480,6 @@ and open the template in the editor.
                                     //console.log(o.idx);
                                     //console.log("tar");
                                     //console.log(tar);
-                                    //Need to get access to the offset of the mct element
-//                                    console.log("the element to scroll d3");
-//                                    console.log(d3.select(".mct").node());
-//                                    console.log("the element to scroll jv");
-//                                    console.log(document.getElementsByClassName("mct"));
                                     
                                     d3.transition()
                                         .duration(750)
@@ -634,13 +501,8 @@ and open the template in the editor.
                                     } 
                                     function scrollTween(offset) {
                                       return function() {
-                                        //let ip = d3.interpolateNumber(window.pageYOffset || document.scrollingElement.scrollTop, offset);
-                                        let ip = d3.interpolateNumber(d3.select(".mct").property("offsetTop"), offset);
-                                        return function(t) { d3.select(".mct").node().scrollTo(0, ip(t)); };
-                                        //return function(t) { scrollTo(0, ip(t)); };
-                                        
-                                        //return function(t) { d3.select(".mct").property("offsetTop",ip(t)); 
-                                        //};
+                                        let ip = d3.interpolateNumber(window.pageYOffset || document.scrollingElement.scrollTop, offset);
+                                        return function(t) { scrollTo(0, ip(t)); };
                                       };
                                     }    
 
@@ -648,20 +510,17 @@ and open the template in the editor.
                             );
                         });
                         //Initializing the reset button
-                        navbd_ul.select(".rb")
+                        navb.select(".rb")
                             .on("click",function(evt){
-                                    //console.log("presed reset button");
                                     //console.log(this);
                                     data_h.descendants().slice(1).forEach(collapse);
                                     updateGraph(data_h);
                                 }
                             )
                         ;
-                        navbd_ul.select(".eab")
+                        navb.select(".eab")
                             .on("click",function(){
                                   //data_h.each(collapse);
-                                   // console.log("presed expand button");
-                                   // console.log(this);
                                   //EXPAND ALL
                                   //this.style("cursor","progress");
                                   //this.style.cursor = "progress";
@@ -696,13 +555,13 @@ and open the template in the editor.
                     });
                     // Sorts the nodes in a tree list like way
                     //data_h.sort(function(a, b) { return b.id - a.id;});
-                    //data_h.sort(function(a, b) { return a.id - b.id ;});
+                    data_h.sort(function(a, b) { return a.id - b.id ;});
                     //##################################################################
                     //##            Var for to avoid overlap of the labels            ##
                     //##################################################################
                     //var nodeSpaceY = heatmapWidth/data_h.descendants().length;
                     var nodeSpaceY = 20;
-                    //var nodeSpaceX = heatmapWidth/samples.length;
+                    var nodeSpaceX = heatmapWidth/samples.length;
                    //console.log(nodeSpaceY);
                     data_h.each(function(d){
                         d.nodeY = ((nodeSpaceY)*(d.id+1)) - (nodeSpaceY/2);
@@ -906,7 +765,38 @@ and open the template in the editor.
                             }
                         );
                 
-                    
+                    var xNode = GxNodes.selectAll('g.x-node')
+                        .data(samples);
+                        xNode.join(
+                            function(enter){
+                                let xNodeEnter = enter
+                                        .append("g")
+                                        .attr('class',"x-node");
+                                    xNodeEnter.append("text")
+                                        .attr('class',"x-node")
+                                        .style("text-anchor", 'start')
+                                        .attr("font-family", "sans-serif")
+                                        .attr("font-size", 12)
+                                        .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; })
+                                        
+                                        //.style("text-orientation","sideways")
+                                        //.attr("writing-mode","sideways-rl")
+                                        .text(function(d) { return d; })
+                                    ;
+                                return(xNodeEnter);
+                            },
+                            function(update){
+                                let xNodeUpdate = update;
+                                    xNodeUpdate.select("text.x-node")
+                                        //.attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + 0 + ")"; });
+                                        .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; });
+                                return(xNodeUpdate);
+                            },function(exit){
+                                let xNodeExit = exit.remove();
+                                    xNodeExit.select("text.x-node")
+                                            .attr("font-size", 0);
+                            }
+                        );
                     //##################################################################
                     //##                 END DRAWING THE NETWORK                      ##
                     //##################################################################
