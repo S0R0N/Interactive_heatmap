@@ -220,8 +220,8 @@ and open the template in the editor.
                     .on("change",function(){
                         console.log("on select event of the filter menu");
                         if(nodes.length>0){
-                            console.log("this");
-                            console.log(this.value);
+                            //console.log("this");
+                            //console.log(this.value);
                             m = this.value;
                             initHeatmapData(m);
                             //htere is something in the dataset so filer
@@ -282,6 +282,7 @@ and open the template in the editor.
             let navbd_ul = sdb
                     .append("ul")
                         .attr("class","nav nav-tabs");
+            //reset button
             navbd_ul    
                 .append("li")
                     .attr("class","nav-item ml-auto")
@@ -289,6 +290,15 @@ and open the template in the editor.
                         .attr("class", "btn btn-outline-success btn-sm rb")
                         .attr("type", "button")
                         .text("Reset")
+            ;
+            //report buttion
+            navbd_ul    
+                .append("li")
+                    .attr("class","nav-item ml-auto")
+                    .append("button")
+                        .attr("class", "btn btn-outline-success btn-sm rpb")
+                        .attr("type", "button")
+                        .text("R")
             ;
             //expand all button
              navbd_ul
@@ -311,8 +321,6 @@ and open the template in the editor.
                                 .style("visibility","hidden");
                         })
             ;
-            
-            
     //##########################################################################
     //##                 DRAWING  MAIN CONTENT (mct)                          ##
     //##########################################################################
@@ -326,40 +334,14 @@ and open the template in the editor.
                     .style("overflow-y","scroll")
                     
             ;
-    
     //##########################################################################
     //##                   DRAWING THE LEGEND CONTAINER                       ##
     //##########################################################################
-            //let svg1 = d3.select("body")
-            //let svg1 = navb
-            /*let svg1 = mct
-                .append("div")
-                .attr("class","svg1")
-                //.style('position','relative')
-                .style('position','fixed')
-                .style('top',(navbar_h)+"px")
-                .style("width","100%")
-                .style("z-index",2)
-                .style("background-color","rgba(255, 255, 255, 0.70")
-                //.attr("transform", "translate("+ (0) + "," + (10) + ")")// se divide entre dos para colocarlo en la mitad
-                    .append("svg")
-                        //.style('position','fixed')
-                        .style('position','relative')
-                        .style("z-index",2)
-                        //.style("background-color","rgba(255, 255, 255, 0.70")
-                        .attr("width", svg1_w)
-                        .attr("height", svg1_h)
-                        
-            ;*/
-            
             let heatColor = d3.scaleOrdinal()
                             .domain(['YES','PARTIAL','NO'])
                             //.range(['#c51b8a','#fa9fb5','#fff'])
                             .range(['#6c6c6c','#cecece','white']);
             ;
-                    
-            
-            
     //Think an adaptative size of SVG canvas to draw the heatmap. 
     //##########################################################################
     //##                   DRAWING THE TOP HEATMAP                            ##
@@ -391,26 +373,13 @@ and open the template in the editor.
             // let see.
             
             let gZoom = svg.append("g")
-                        
-                    //dragstart
-                    //.on("mousedown.zoom", null)
-                    //.on("touchstart.zoom", null)
-                    //.on("touchmove.zoom", null)
-                    //.on("touchend.zoom", null)
-            ;
-                /*.on('mousemove', function() {
-                    mousePosition = d3.mouse(this);
-                    tooltipGroup.attr('transform', 'translate(' + (mousePosition[0] - (150 / 2) + 10) + ',' + (mousePosition[1] + 20) + ')');
-                    tooltipText.text(function() {
-                        return selectedCell ? '(' + selectedCell.col + ', ' + selectedCell.row + '): value: ' + selectedCell.value : '';
-                    });
-                });*/
+                    .attr("scale",1);
+           ;
             // CREATING THE HEATMAP DRAWING SPACE 
             let top_banner_inside = gZoom.append('g')
                     .attr('class', 'top_banner_in')
                     .attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
             ;
-            
             //let legends = top_banner_inside.append('g')
             let legends = gZoom.append('g')
                     .attr('class', 'legends')
@@ -526,10 +495,6 @@ and open the template in the editor.
             }
             // Toggle children collapse or expansion on click.
             function click(d) {
-                console.log("nodes - all click");
-                console.log(nodes);
-                console.log("data_h - all click");
-                console.log(data_h);
               if (d.children) {
                   d._children = d.children;
                   d.children = null;
@@ -747,7 +712,18 @@ and open the template in the editor.
                                 }
                             )
                         ;
-                        m ="all";
+                        navbd_ul.select(".rpb")
+                            .on("click",function(){
+                                /*console.log("report button result");
+                                console.log(gZoom.attr("transform"));
+                                console.log(gZoom.attr("scale"));*/
+                                  
+                                  //nodes.forEach(expand);
+                                  
+                                }
+                            )
+                        ;
+                        m ="path";
                         initHeatmapData(m);
                     }
                 );
@@ -757,23 +733,26 @@ and open the template in the editor.
         function initHeatmapData (mode){
             //let out;
             selected_data = data_h;
-            selected_data.descendants().slice(1).forEach(expand);
+            
             let phtext = "";
             switch(mode) {
                 case "all":
                     //console.log("all");
                     selected_data = data_h;
+                    selected_data.descendants().slice(1).forEach(expand);
                     phtext = "Search all functions here";
                     
                 break;
                 case "path":
                     //console.log("path");
                     selected_data = p_data;
+                    selected_data.descendants().slice(1).forEach(expand);
                     phtext = "Search for pathways here";
                 break;
                 case "mpath":
                     //console.log("mpath");
                     selected_data = mp_data;
+                    selected_data.descendants().slice(1).forEach(expand);
                     phtext = "Search for metapathways here";
 
                 break
@@ -795,10 +774,6 @@ and open the template in the editor.
                         // searching the selected function on the hierchical dataset
                         // if the selected item is not expanded it will find it expand its parents and return it
                         selected_data.descendants().forEach(getFilteredData);
-
-                        //console.log("What is o? after the function");
-                        //console.log(o);
-
                         //after finding the selected item, refresh the heatmap
                         updateGraph(selected_data);
                         // animate the scroll to the item and the color of the selected item. 
@@ -811,7 +786,7 @@ and open the template in the editor.
 
                         d3.transition()
                             .duration(750)
-                            .tween("scroll", scrollTween(o.nodeY))
+                            .tween("scroll", scrollTween(o.nodeY*(gZoom.attr("scale"))))
                             .transition()
                                 .duration(1500)
                                 .tween("selected_text", borderTween("black"))
@@ -833,12 +808,10 @@ and open the template in the editor.
                             let ip = d3.interpolateNumber(d3.select(".mct").property("offsetTop"), offset);
                             return function(t) { d3.select(".mct").node().scrollTo(0, ip(t)); };
                             //return function(t) { scrollTo(0, ip(t)); };
-
                             //return function(t) { d3.select(".mct").property("offsetTop",ip(t)); 
                             //};
                           };
                         }    
-
                     }
                 );
                 
@@ -891,31 +864,9 @@ and open the template in the editor.
                 function updateGraph (source){
                     // Switch to define the type of drawaing we are drawing or updating. 
                     //We need to find a way to modify decendants so it can explore the whole tree even if there are _children elements. 
-                    //apply a mod to .decedants()
-                    /*switch(m) {
-                        case "all":
-                            // code block
-                            nodes = data_h.descendants();
-                        break;
-                        case "path":
-                            // code block
-                            nodes = p_data.descendants();
-                        break;
-                        case "mpath":
-                            nodes = mp_data.descendants();
-                        default:
-                          // code block
-                      }*/
-                      nodes = selected_data.descendants();
-                      console.log("nodes on update");
-                      console.log(nodes);
-                    //##################################################################
-                    //##            Var for to avoid overlap of the labels            ##
-                    //##################################################################
-                    //var nodeSpaceY = heatmapWidth/data_h.descendants().length;
-                    //var nodes = data_h.descendants().filter(d =>d.show ===true);
-                    //nodes = data_h.descendants();
-                    //orders nodes by d.or
+                    nodes = selected_data.descendants();
+                      //console.log("nodes on update");
+                      //console.log(nodes);
                     nodes.sort(function(a, b){return a.or - b.or;});
                     
                     var nodeSpaceY = 20;
@@ -1201,21 +1152,26 @@ and open the template in the editor.
             //******************************************************************
             //**                WHEN IT FINISHES THE DRAWING                  **
             //******************************************************************
-            console.log("svg.nodes().getBBox()");
-            console.log(svg.node().getBBox());
-            let zoomv =  d3.zoom()
-                            .on("zoom", function () {
-                                gZoom.attr("transform", "scale(" + d3.event.transform.k+")"); //d3.event.transform);//Gotta find the way to modify the transform function so it does not move the svg. 
-                            })
-                            //.on("wheel.zoom", null)
-                            /*.on("touchstart", null)
-                            .on("touchmove", null)
-                            .on("touchend", null)*/
-                            .scaleExtent([0.2, 1.05])
-                            .translateExtent([[svg.node().getBBox().x, svg.node().getBBox().y],[svg.node().getBBox().x+svg.node().getBBox().width , svg.node().getBBox().y + svg.node().getBBox().height ]])
-                            //.translateBy(0,0)
-                        ;
-            gZoom.call(zoomv);
+            //console.log("svg.nodes().getBBox()");
+            //console.log(svg.node().getBBox());
+                let zoomv =  d3.zoom()
+                    .on("zoom", function () {
+                        gZoom.attr("transform", "scale(" + d3.event.transform.k+")"); //d3.event.transform);//Gotta find the way to modify the transform function so it does not move the svg. 
+                        gZoom.attr("scale",d3.event.transform.k);
+                        svg
+                        .attr("width", (b_width + margin.left + margin.right)*d3.event.transform.k)
+                        .attr("height", (nodeSpaceY*nodes.length + margin.top + margin.bottom +sample_name_heigth+20)*d3.event.transform.k)
+                        .attr("viewBox", [0, 0, (b_width + margin.left + margin.right)*d3.event.transform.k, (nodeSpaceY*nodes.length + margin.top + margin.bottom +sample_name_heigth+20)*d3.event.transform.k]);
+                    })
+                    //.on("wheel.zoom", null)
+                    /*.on("touchstart", null)
+                    .on("touchmove", null)
+                    .on("touchend", null)*/
+                    .scaleExtent([0.2, 1.05])
+                    //.translateExtent([[svg.node().getBBox().x, svg.node().getBBox().y],[svg.node().getBBox().x+svg.node().getBBox().width , svg.node().getBBox().y + svg.node().getBBox().height ]])
+                    //.translateBy(0,0)
+                ;
+                gZoom.call(zoomv);
                 //console.log("reseted the cursor");
                 //bo.style("cursor","default");
                     
