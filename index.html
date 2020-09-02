@@ -37,7 +37,7 @@ and open the template in the editor.
             
             let svg1_h               = top_banner_heigth + margin.top + margin.bottom;
             let svg1_w               = top_banner_width + margin.left + margin.right;
-            const legend_h           = 24;//depends on the size of the FONT, ie., for font 12 - 16px
+            const legend_h           = 20;//depends on the size of the FONT, ie., for font 12 - 16px
             
             const Y_link_lenght      = 80;                                    // total network size
             const link_margin        = 5;                                    // space between the heatmap and network
@@ -54,9 +54,14 @@ and open the template in the editor.
             let mp_data;//buffer for metapathdata
             let selected_data;//pointer to the selected tree dataset
             const nodeSpaceY         = 20;
+            const minZoom              = 0.2;
+            const maxZoom              = 1.05;
             let fcheck               = [true,true,true];//vector to manage the filter checkbox selection for YES, NO, PARTIAL
             let rawJson;              //buffer for the Json
-            
+            let zScale = d3.scaleLinear()
+                .domain([0,100])
+                .range([minZoom,maxZoom])
+            ;
             //var mousePosition;                                      
             //la posicion del mouse para el onhover
 
@@ -104,7 +109,7 @@ and open the template in the editor.
                 .attr("href","#")
                 .attr("class","navbar-brand")
                 .style("margin-left","1rem")
-                .text("Interactive Heatmap");
+                .text("Interactive Heatmap")
             ;
             //BUTTON TO HIDE THE RESET AND SEARCH BAR WHEN THE SCREEN IS SMALL
             navb.append("button")
@@ -360,8 +365,8 @@ and open the template in the editor.
     //##                       Space for the legends                          ##
     //##########################################################################
             let heatColor = d3.scaleOrdinal()
-                            .domain(['YES','PARTIAL','NO'])
-                            .range(['#6c6c6c','#cecece','white']);
+                .domain(['YES','PARTIAL','NO'])
+                .range(['#6c6c6c','#cecece','white']);
             ;
             let legend_menu = sdb
                 .append("ul")
@@ -398,7 +403,7 @@ and open the template in the editor.
                         )
                         .attr("fill",d => heatColor(d))
                     ;
-                    GLegendsEnter.append("text")
+                    GLegendsEnter.append("text")    
                         .attr("x", legend_h+5)
                         .style("font-size","12px")
                         .attr("y",function(d,i) {
@@ -410,8 +415,30 @@ and open the template in the editor.
                     return(GLegendsEnter);
                 })
             ;
-           
-    //        
+           sdb.append("hr");
+    //##########################################################################
+    //##                           ZOOM CONTROLS                              ##
+    //##########################################################################
+    //<div class="slidecontainer">
+    //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+    //</div>
+            let sdzc = sdb.append("div")//side bar buttion
+                .attr("class","form-group")
+            ;
+            sdzc.append("label")
+                .attr("for","zc")//filter menu select filter select
+                .text("Zoom control")
+            ;
+            sdzc.append("input")
+                    .attr("class","form-control zcc")
+                    .attr("id","zc")
+                    .attr("type","range")
+                    .attr("min",0)
+                    .attr("max",100)
+                    .attr("value",50)
+                    
+            ;
+            sdb.append("hr");
     //##########################################################################
     //##                 DRAWING  MAIN CONTENT (mct)                          ##
     //##########################################################################
@@ -686,8 +713,8 @@ and open the template in the editor.
                     //Initializing root
                         samples  = res.sample_names;
                         rawJson  = res.property_tree;
-                        var nodeSpaceX = heatmapWidth/samples.length;
-                        var xNode = GxNodes.selectAll('g.x-node')
+                        let nodeSpaceX = heatmapWidth/samples.length;
+                        let xNode = GxNodes.selectAll('g.x-node')
                         .data(samples);
                         xNode.join(
                             function(enter){
@@ -723,7 +750,7 @@ and open the template in the editor.
                 );
             
         function initHeatmapData (mode){
-            console.log("starting to run initHeatmapData");
+            //console.log("starting to run initHeatmapData");
             
             //******************************************************
             //**      SETTING THE YES NO PARTIAL FILTER           **
@@ -998,11 +1025,14 @@ and open the template in the editor.
             //**                    ZOOM                                  **
             //**************************************************************
             selected_data.descendants().slice(1).forEach(collapse);
-            
+            //let transform;
             let zoomv =  d3.zoom()
                 .on("zoom", function () {
                     //getting the scrolled ratio before zooming
+                    //console.log("zoom event");
+                    
                     const scrollRatio = mct.property("scrollTop")/mct.property("scrollHeight");
+                    d3.select(".zcc").property("value",  d3.event.scale);
                     //ZOOMING IN THE TARGET OBJECT
                     gZoom
                         .attr("transform", " translate("+0+ ","+0+")  scale(" + d3.event.transform.k+")")
@@ -1016,16 +1046,18 @@ and open the template in the editor.
                     ;
                     //SCALING THE Y POSITION OF THE SCROLL BAR TO KEEP THE SCREEN ORIGINAL COORDINATE. BEFORE ZOOMING. 
                     mct.node().scrollTo(0, scrollRatio*mct.property("scrollHeight"));
+                    transform = d3.event.transform;
                 })
-
-                //.on("wheel.zoom", null)
-                //.on("touchstart", null)
-                //.on("touchmove", null)
-                //.on("touchend", null)
+                
                 .scaleExtent([0.2, 1.05])
             ;
 
-            svg.call(zoomv);
+            svg.call(zoomv)
+                .on("wheel.zoom", null)
+                .on("touchstart.zoom", null)
+                .on("touchmove.zoom", null)
+                .on("touchend.zoom", null)
+            ;
             svg.call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(0.5));
             
             svg
@@ -1037,7 +1069,10 @@ and open the template in the editor.
                 .attr("transform","scale(0.5)")
                 .attr("scale",0.5)
             ;
-
+            sdzc.on("input", function(d){
+                zoomv.scaleTo(svg,zScale(d3.select(".zcc").property("value")));
+            });
+            
             updateGraph(selected_data);
         }
         //######################################################################
