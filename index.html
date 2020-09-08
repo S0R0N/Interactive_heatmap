@@ -54,20 +54,22 @@ and open the template in the editor.
             let mp_data;//buffer for metapathdata
             let selected_data;//pointer to the selected tree dataset
             const nodeSpaceY         = 20;
-            const minZoom              = 0.2;
-            const maxZoom              = 1.05;
+            const minZoom            = 0.2;
+            const maxZoom            = 1.05;
             let fcheck               = [true,true,true];//vector to manage the filter checkbox selection for YES, NO, PARTIAL
             let rawJson;              //buffer for the Json
+            const intro_animation     = 3500;
             let zScale = d3.scaleLinear()
                 .domain([0,100])
-                .range([minZoom,maxZoom])
-            ;
+                .range([minZoom,maxZoom]);
+            
             //var mousePosition;                                      
             //la posicion del mouse para el onhover
 
             /// CREATING THE MAIN SVG or CANVAS
 
             let ht = d3.select("html")
+                .attr("font-family", " Arial, sans-serif")
             ;
             let bo = d3.select("body")
             ;
@@ -681,23 +683,23 @@ and open the template in the editor.
             //##          INITIALIZING THE CHECKBOXES TO FILTER DATA              ##
             //######################################################################
                 filter_menu_selec.on("change",function(){
-                    console.log("on select event of the filter menu");
+                    //console.log("on select event of the filter menu");
                     m = this.value;
 
                 });
                 d3.select(".fry").on("change",function(){
-                    console.log("fry change");
-                    console.log(d3.select(this).property("checked"));
+                    //console.log("fry change");
+                    //console.log(d3.select(this).property("checked"));
                     fcheck[0] = d3.select(this).property("checked");
                 });
                 d3.select(".frp").on("change",function(){
-                    console.log("frp change");
-                    console.log(d3.select(this).property("checked"));
+                    //console.log("frp change");
+                    //console.log(d3.select(this).property("checked"));
                     fcheck[1] = d3.select(this).property("checked");
                 });
                 d3.select(".frn").on("change",function(){
-                    console.log("frn change");
-                    console.log(d3.select(this).property("checked"));
+                    //console.log("frn change");
+                    //console.log(d3.select(this).property("checked"));
                     fcheck[2] = d3.select(this).property("checked");
                 });
         
@@ -724,11 +726,16 @@ and open the template in the editor.
                                     xNodeEnter.append("text")
                                         .attr('class',"x-node")
                                         .style("text-anchor", 'start')
-                                        .attr("font-family", "sans-serif")
+                                        .attr("font-family", "Arial, sans-serif")
                                         .attr("font-size", 12)
+                                        .style('fill', "white")
                                         .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; })
                                         .text(function(d) { return d; })
+                                        .transition()
+                                            .duration(intro_animation)
+                                                .style('fill', "black")
                                     ;
+                                    
                                 return(xNodeEnter);
                             },
                             function(update){
@@ -1030,16 +1037,23 @@ and open the template in the editor.
                 .on("zoom", function () {
                     //getting the scrolled ratio before zooming
                     //console.log("zoom event");
+                    //UPDATE ZOOM BAR
                     
                     const scrollRatio = mct.property("scrollTop")/mct.property("scrollHeight");
                     d3.select(".zcc").property("value",  d3.event.scale);
                     //ZOOMING IN THE TARGET OBJECT
-                    gZoom
+                    /*gZoom
+                        .attr("transform", " translate("+0+ ","+0+")  scale(" + d3.event.transform.k+")")
+                        .attr("scale",d3.event.transform.k)
+                    ;*/
+                    gZoom.transition()
+                        .duration(1000)
                         .attr("transform", " translate("+0+ ","+0+")  scale(" + d3.event.transform.k+")")
                         .attr("scale",d3.event.transform.k)
                     ;
                     //SCALING THE SVG SO I EVEN IF I ZOOM I CAN STILL EXPLORE THE WHOLE OBJECT
-                    svg
+                    svg.transition()
+                        .duration(1000)
                         .attr("width", (b_width + margin.left + margin.right)*d3.event.transform.k)
                         .attr("height", (nodeSpaceY*(selected_data.descendants().length) + margin.top + margin.bottom +sample_name_heigth+20)*d3.event.transform.k)
                         .attr("viewBox", [0,0, (b_width + margin.left + margin.right)*d3.event.transform.k, (nodeSpaceY*(selected_data.descendants().length) + margin.top + margin.bottom +sample_name_heigth+20)*d3.event.transform.k])
@@ -1053,13 +1067,14 @@ and open the template in the editor.
             ;
 
             svg.call(zoomv)
+                .on("dblclick.zoom", null)
                 .on("wheel.zoom", null)
                 .on("touchstart.zoom", null)
                 .on("touchmove.zoom", null)
                 .on("touchend.zoom", null)
             ;
             svg.call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(0.5));
-            
+            d3.select(".zcc").property("value",  50);
             svg
                 .attr("width", (b_width + margin.left + margin.right))
                 .attr("height", (nodeSpaceY*(selected_data.descendants().length) + margin.top + margin.bottom +sample_name_heigth+20)*0.5)
@@ -1098,7 +1113,7 @@ and open the template in the editor.
                         //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')
                     ;
                     
-                    var yLink = GyLinks.selectAll('g.link') 
+                    /*var yLink = GyLinks.selectAll('g.link') 
                             .data(nodes,function(d,i) {
                                 return d.idx;
                             });
@@ -1152,7 +1167,7 @@ and open the template in the editor.
                                             .style('stroke-width', 0);                                    
                                 return(yLinkExit);
                             }
-                        );
+                        );*/
                    // Ynode has the same proble that ylink had, the g element is not being created and the sub elements are flying. Gotta ground them. 
                     //##################################################################
                     //##                     DRAWING THE NETWORK                      ##
@@ -1166,6 +1181,7 @@ and open the template in the editor.
                             function(enter){
                                 let yNodeEnter = enter
                                         .append("g")
+                                        //.transition()
                                         .attr('class',function(d) {
                                             return 'y-node '+ d.idx;}
                                         );
@@ -1176,11 +1192,10 @@ and open the template in the editor.
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; })
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; })
                                         .attr('transform', function(d) { 
-                                            //console.log("d.yLinkScaledLenght");
-                                            //console.log(d.yLinkScaledLenght);
                                             return 'translate(' + d.yLinkScaledLenght + ',' + (d.nodeY+3) + ')'; 
                                         })
-                                        .attr("font-family", "sans-serif")
+                                        .style('fill', "white")
+                                        .attr("font-family", " Arial, sans-serif")
                                         .attr("font-size", 12)
                                         .text(function(d) {
                                             let t = "normal";
@@ -1195,7 +1210,7 @@ and open the template in the editor.
                                             }
                                         )
                                         //.attr('cursor', 'pointer')
-                                        .style("fill","black")
+                                        //.style("fill","black")
                                         .style("font-weight", function(d) {
                                             let fw = "normal";
                                             if(d.height ===0){
@@ -1223,13 +1238,22 @@ and open the template in the editor.
                                                 }
                                             }
                                         )
-                                        .on('click', click);
+                                        .on('click', click)
+                                        .transition()
+                                            .duration(intro_animation)
+                                            .style('fill', "black")
+
+                                ;
                                 return(yNodeEnter);
                             },
-                            function(update){
-                                let yNodeUpdate = update;
+                            function(update){//transition.
+                                let yNodeUpdate = update
+                                    //.transition()
+                                    //    .duration(200)
+                                ;
                                     yNodeUpdate.select("text")
-                                        .style("fill","black")
+                                            
+                                        
                                         .style("font-weight", function(d) {
                                             let fw = "normal";
                                             if(d.height ===0){
@@ -1273,13 +1297,25 @@ and open the template in the editor.
                                         //
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY +(nodeSpaceY/2)) + ')'; });
                                         //.attr('transform', function(d) { return 'translate(' + 0 + ',' + (d.nodeY+3) + ')'; });
-                                        .attr('transform', function(d) { return 'translate(' + d.yLinkScaledLenght + ',' + (d.nodeY+3) + ')'; });
+                                        .attr('transform', function(d) { return 'translate(' + d.yLinkScaledLenght + ',' + (d.nodeY+3) + ')'; })
+                                        .transition()
+                                            .duration(intro_animation)
+                                            .style("fill","black")
+                                ;
                                 return(yNodeUpdate);
                             },
                             function(exit){
-                                let yNodeExit = exit.remove();
-                                    yNodeExit.select("text.link")
-                                            .attr("font-size", 0);
+                                let yNodeExit = exit;
+                                    //console.log(yNodeExit);
+                                    /*yNodeExit.select("text.y-node") 
+                                            .transition()
+                                            .duration(intro_animation)
+                                            //.attr("font-size", 0)
+                                            .style("fill","white")
+                                            //.remove()
+                                    ;*/
+                                    yNodeExit.remove();
+                                return(yNodeExit);
                             }
                         );
                     //##################################################################
@@ -1305,6 +1341,7 @@ and open the template in the editor.
                             let rowEnter = enter.append('g')
                                 //.attr('class', 'row')
                                 .attr('class',function(d) {return 'row '+ d.idx;})
+                                .style('opacity', 0)
                                 .attr('transform', function(d, i) {
 
                                     return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
@@ -1329,6 +1366,11 @@ and open the template in the editor.
                                             return(rowEnterRect);
                                         }
                                     );
+                            
+                            rowEnter.transition()
+                                .duration(intro_animation)
+                                    .style('opacity', 1)
+                            ;
                         },
                         function(update){
                             //no le tengo mucha fe por la division del joing update del objeto children
@@ -1336,9 +1378,11 @@ and open the template in the editor.
                             //console.log("updating row");
                             let rowUpdate = update;
                                 rowUpdate
-                                    .attr('transform', function(d, i) {
-                                        return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
-                                    });
+                                    .transition()
+                                        .duration(1500)
+                                        .attr('transform', function(d, i) {
+                                            return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
+                                        });
                                 rowUpdate.selectAll('rect')
                                     .style('fill', function (d) {
                                             //console.log("rect data on update");
@@ -1355,11 +1399,11 @@ and open the template in the editor.
                         },
                         function(exit){
                             let rowExit = exit.remove();
-                                rowExit.selectAll("rect")
+                                /*rowExit.selectAll("rect")
                                     .style('stroke', '#fff')
                                     .style('stroke-width', 1e-6)
                                     .attr('width', 1e-6)
-                                    .attr('height', 1e-6);
+                                    .attr('height', 1e-6);*/
                             return(rowExit);
                         }
                     );
