@@ -705,6 +705,19 @@ and open the template in the editor.
             filter_menu_selec.on("change",function(){
                 //console.log("on select event of the filter menu");
                 m = this.value;
+                console.log("m");
+                console.log(m);
+                if(m==="all"){
+                    d3.select(".fry").attr("disabled","true");
+                    d3.select(".frp").attr("disabled","true");
+                    d3.select(".frn").attr("disabled","true");
+                    d3.select(".frs").attr("disabled","true");
+                }else{
+                    d3.select(".fry").attr("disabled",null);
+                    d3.select(".frp").attr("disabled",null);
+                    d3.select(".frn").attr("disabled",null);
+                    d3.select(".frs").attr("disabled",null);
+                }
 
             });
             d3.select(".fry").on("change",function(){
@@ -920,12 +933,12 @@ and open the template in the editor.
             initJson(rawJson);
             let metp_vector = filterTypeW(rawJson,"metapathway");
             let p_vector = filterTypeW(rawJson,"pathway");
-            let all_vector = filterTypeW(rawJson,"all");
+            //let all_vector = filterTypeW(rawJson,"all");
             //******************************************************
             //**     TRANSFORMING TO D3 HIERARCHY OBJECT JSON     **
             //******************************************************
-            //data_h  = d3.hierarchy(rawJson,function(d){return d.children;});
-            data_h  = d3.hierarchy({"children":all_vector,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
+            data_h  = d3.hierarchy(rawJson,function(d){return d.children;});
+            //data_h  = d3.hierarchy({"children":all_vector,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
             mp_data = d3.hierarchy({"children":metp_vector,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
             p_data  = d3.hierarchy({"children":p_vector,"enabled":false,"name":"pathways","property_id":"GenProp_paths","result":rawJson.result},function(d){return d.children;});
 
