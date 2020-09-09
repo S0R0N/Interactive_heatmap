@@ -56,7 +56,7 @@ and open the template in the editor.
             const nodeSpaceY         = 20;
             const minZoom            = 0.2;
             const maxZoom            = 1.05;
-            let fcheck               = [true,true,true];//vector to manage the filter checkbox selection for YES, NO, PARTIAL
+            let fcheck               = [true,true,true,false];//vector to manage the filter checkbox selection for YES, NO, PARTIAL
             let rawJson;              //buffer for the Json
             const intro_animation     = 3500;
             let zScale = d3.scaleLinear()
@@ -308,6 +308,21 @@ and open the template in the editor.
                 .attr("class","form-check-label")
                 .attr("for","fr_n")
                 .text("NO")
+            ;
+            let fr_S = fr.append("div")
+                    .attr("class","form-check form-check-inline")
+            ;
+            fr_S.append("input")
+                .attr("type","checkbox")
+                .attr("class","frs form-check-input")
+                .attr("value","S")
+                .attr("id","fr_s")
+                .property("checked",fcheck[3])
+            ;
+            fr_S.append("label")
+                .attr("class","form-check-label")
+                .attr("for","fr_s")
+                .text("Special")
             ;
             let sdbb = sdb.append("div")//side bar buttion
                 .attr("class","form-group text-center")
@@ -625,6 +640,11 @@ and open the template in the editor.
             function filter_partial_ypn(element, index, array) {
                 return (element === "PARTIAL" || element === "NO" || element === "YES");
             }
+            function filter_partial_special(element, index, array) {
+                console.log("array[0]");
+                console.log(array[0]);
+                return (element !== array[0]);//you have at least one different result
+            }
             let fc = filter_partial_ypn;
             function filteringLoop(element, index, array) {
                 return element.result.every(fc);
@@ -639,10 +659,10 @@ and open the template in the editor.
                         //Guarantee that at least a YES, PARTIAL, NO option is selected.
                         if(fcheck.some(d => d===true)){
                             //update the vector with the checkbox's values
-                            fcheck = [d3.select(".fry").property("checked"),d3.select(".frp").property("checked"),d3.select(".frn").property("checked")];
+                            fcheck = [d3.select(".fry").property("checked"),d3.select(".frp").property("checked"),d3.select(".frn").property("checked"),d3.select(".frs").property("checked")];
 
                         }else{
-                            alert("Please choose at least one value from YES, NO, PARTIAL");
+                            alert("Please choose at least one value from YES, NO, PARTIAL or Special");
                         }
                         initHeatmapData(m);
                     }
@@ -682,26 +702,52 @@ and open the template in the editor.
             //######################################################################
             //##          INITIALIZING THE CHECKBOXES TO FILTER DATA              ##
             //######################################################################
-                filter_menu_selec.on("change",function(){
-                    //console.log("on select event of the filter menu");
-                    m = this.value;
+            filter_menu_selec.on("change",function(){
+                //console.log("on select event of the filter menu");
+                m = this.value;
 
-                });
-                d3.select(".fry").on("change",function(){
-                    //console.log("fry change");
-                    //console.log(d3.select(this).property("checked"));
-                    fcheck[0] = d3.select(this).property("checked");
-                });
-                d3.select(".frp").on("change",function(){
-                    //console.log("frp change");
-                    //console.log(d3.select(this).property("checked"));
-                    fcheck[1] = d3.select(this).property("checked");
-                });
-                d3.select(".frn").on("change",function(){
-                    //console.log("frn change");
-                    //console.log(d3.select(this).property("checked"));
-                    fcheck[2] = d3.select(this).property("checked");
-                });
+            });
+            d3.select(".fry").on("change",function(){
+                //console.log("fry change");
+                //console.log(d3.select(this).property("checked"));
+                fcheck[0] = d3.select(this).property("checked");
+                if(fcheck[3]){
+                    fcheck[3] = false;
+                    d3.select(".frs").property("checked",false);
+                }
+            });
+            d3.select(".frp").on("change",function(){
+                //console.log("frp change");
+                //console.log(d3.select(this).property("checked"));
+                fcheck[1] = d3.select(this).property("checked");
+                if(fcheck[3]){
+                    fcheck[3] = false;
+                    d3.select(".frs").property("checked",false);
+                }
+            });
+            d3.select(".frn").on("change",function(){
+                //console.log("frn change");
+                //console.log(d3.select(this).property("checked"));
+                fcheck[2] = d3.select(this).property("checked");
+                if(fcheck[3]){
+                    fcheck[3] = false;
+                    d3.select(".frs").property("checked",false);
+                }
+            });
+            d3.select(".frs").on("change",function(){
+                //console.log("frn change");
+                //console.log(d3.select(this).property("checked"));
+                fcheck[3] = d3.select(this).property("checked");
+                if(fcheck[3]){
+                    fcheck[2] = false;
+                    d3.select(".frn").property("checked",false);
+                    fcheck[1] = false;
+                    d3.select(".frp").property("checked",false);
+                    fcheck[0] = false;
+                    d3.select(".fry").property("checked",false);
+                } 
+                
+            });
         
         //######################################################################
         //##                     INIT HEATMAP DATA                            ##
@@ -747,8 +793,9 @@ and open the template in the editor.
                             },
                             function(exit){
                                 let xNodeExit = exit.remove();
-                                    xNodeExit.select("text.x-node")
-                                            .attr("font-size", 0);
+                                    /*xNodeExit.select("text.x-node")
+                                            .attr("font-size", 0);*/
+                                return(xNodeExit);
                             }
                         );
                         //m ="path";
@@ -762,35 +809,43 @@ and open the template in the editor.
             //******************************************************
             //**      SETTING THE YES NO PARTIAL FILTER           **
             //******************************************************
-            let fm = Number(fcheck[0]).toString() + Number(fcheck[1]).toString() + Number(fcheck[2]).toString();
+            let fm = Number(fcheck[0]).toString() + Number(fcheck[1]).toString() + Number(fcheck[2]).toString()+ Number(fcheck[3]).toString();
+            //create a variable to store the other checkbox for the special filter.
+            //console.log("fm");
+            //console.log(fm);
             switch(fm) {
-                case "001":
+                case "0010":
                     //Get only NO
                     fc = filter_partial_n;
                 break;
-                case "010":
+                case "0100":
                     //Get only PARTIAL
                     fc = filter_partial_p;
                 break;
-                case "011":
+                case "0110":
                     //Get PARTIAL OR NO
                     fc = filter_partial_pn;
                 break
-                case "100":
+                case "1000":
                     //Get only YES
                     fc = filter_partial_y;
                 break
-                case "101":
+                case "1010":
                     //Get YES OR NO
                     fc = filter_partial_yn;
                 break
-                case "110":
+                case "1100":
                     //Get YES OR PARTIAL
                     fc = filter_partial_yp;
                 break
-                case "111":
+                case "1110":
                     ////Get YES OR PARTIAL OR NO (all)
                     fc = filter_partial_ypn;
+                break
+                case "0001":
+                    ////Get special
+                    //console.log("calling special");
+                    fc = filter_partial_special;
                 break
                 default:
                   // code block
@@ -817,6 +872,7 @@ and open the template in the editor.
                             d.type = "pathway";
                         }else{
                             // try guild
+                            d.type = "all";
                         }
 
                     }
@@ -831,16 +887,22 @@ and open the template in the editor.
                     if (d.type===t){
                         // add it to the result vector
                         // check if the node follows the partial, no and yes filter. 
-                        //console.log("d.result.every(fc)");
-                        //console.log(d.result.every(fc));
-                        if (d.result.every(fc)){
-                            v.push(d);
+                        if(fc ===filter_partial_special){
+                            console.log("filtering special");
+                            if (d.result.some(fc)){
+                                v.push(d);
+                            }else{
+                                //console.log("it was a selected thingy, but did not have the check filters");
+                            }
                         }else{
-                            //console.log("it was a selected thingy, but did not have the check filters");
+                            if (d.result.every(fc)){
+                                v.push(d);
+                            }else{
+                                //console.log("it was a selected thingy, but did not have the check filters");
+                            }
                         }
                         //d.result.every
                         // if it follows add if not, then no. 
-                        
                     }else{
                         // no add anything
                     }
@@ -849,7 +911,7 @@ and open the template in the editor.
                 }
                 if (d.children) d.children.forEach(function(d) { filterType(d,t,v); });
             }                    
-            function filterTypeW(d,t){
+            function filterTypeW(d,t){//add a call to the special filter function. 
                 let met_vector = [];
                 filterType(d,t,met_vector);
                 return(met_vector);
@@ -858,10 +920,12 @@ and open the template in the editor.
             initJson(rawJson);
             let metp_vector = filterTypeW(rawJson,"metapathway");
             let p_vector = filterTypeW(rawJson,"pathway");
+            let all_vector = filterTypeW(rawJson,"all");
             //******************************************************
             //**     TRANSFORMING TO D3 HIERARCHY OBJECT JSON     **
             //******************************************************
-            data_h  = d3.hierarchy(rawJson,function(d){return d.children;});
+            //data_h  = d3.hierarchy(rawJson,function(d){return d.children;});
+            data_h  = d3.hierarchy({"children":all_vector,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
             mp_data = d3.hierarchy({"children":metp_vector,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
             p_data  = d3.hierarchy({"children":p_vector,"enabled":false,"name":"pathways","property_id":"GenProp_paths","result":rawJson.result},function(d){return d.children;});
 
@@ -950,6 +1014,8 @@ and open the template in the editor.
                     //after finding the selected item, refresh the heatmap
                     updateGraph(selected_data);
                     // animate the scroll to the item and the color of the selected item. 
+                    //console.log("o");
+                    //console.log(o);
                     let tar = d3.selectAll("."+o.idx)
                         .select(".y-node")
                         .style("fill", "blue")
@@ -959,7 +1025,7 @@ and open the template in the editor.
                         .duration(750)
                         .tween("scroll", scrollTween(o.nodeY*(gZoom.attr("scale"))))
                         .transition()
-                            .duration(1500)
+                            .duration(5000)
                             .tween("selected_text", borderTween("black"))
                     ;
                     function borderTween(target) {
@@ -1086,6 +1152,7 @@ and open the template in the editor.
             ;
             sdzc.on("input", function(d){
                 zoomv.scaleTo(svg,zScale(d3.select(".zcc").property("value")));
+                gZoom.attr("scale",zScale(d3.select(".zcc").property("value")));
             });
             
             updateGraph(selected_data);
@@ -1347,30 +1414,33 @@ and open the template in the editor.
                                     return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
                                 });  
                             let rowEnterRect = rowEnter
-                                    .selectAll('rect')
-                                    .data(function(d) {
-                                        return(d.data.result);
-                                    });
+                                .selectAll('rect')
+                                .data(function(d) {
+                                    return(d.data.result);
+                                });
                             rowEnterRect
-                                    .join(
-                                        function(enter){
-                                            let rowEnterRect = enter.append('rect')
-                                                .style('fill', function (d) {return heatColor(d);})
-                                                .style('opacity', 0.7)
-                                                .attr('x', function(d, i) {return bandX(i);})
-                                                .style('stroke', '#000')
-                                                .style('stroke-width', 1)
-                                                .attr('width', bandX.bandwidth())
-                                                .attr('height', nodeSpaceY);
-                                                //.attr('height', bandX.bandwidth());
-                                            return(rowEnterRect);
-                                        }
-                                    );
-                            
+                                .join(
+                                    function(enter){
+                                        let rowEnterRect = enter.append('rect')
+                                            .style('fill', function (d) {return heatColor(d);})
+                                            .style('opacity', 0.7)
+                                            .attr('x', function(d, i) {return bandX(i);})
+                                            .style('stroke', '#000')
+                                            .style('stroke-width', 1)
+                                            .attr('width', bandX.bandwidth())
+                                            .attr('height', nodeSpaceY)
+                                            /*.transition()
+                                                .duration(intro_animation)
+                                                    .style('opacity', 1)
+                                            ;//.attr('height', bandX.bandwidth());*/
+                                        return(rowEnterRect);
+                                    }
+                                );
                             rowEnter.transition()
                                 .duration(intro_animation)
                                     .style('opacity', 1)
                             ;
+                            return(rowEnter);
                         },
                         function(update){
                             //no le tengo mucha fe por la division del joing update del objeto children
@@ -1382,7 +1452,9 @@ and open the template in the editor.
                                         .duration(1500)
                                         .attr('transform', function(d, i) {
                                             return 'translate(0, ' + (d.nodeY- (nodeSpaceY/2)) + ')';
-                                        });
+                                        })
+                                        .style('opacity', 1)
+                                        ;
                                 rowUpdate.selectAll('rect')
                                     .style('fill', function (d) {
                                             //console.log("rect data on update");
@@ -1396,6 +1468,7 @@ and open the template in the editor.
                                     .attr('height', nodeSpaceY);
                                     //.attr('height', bandX.bandwidth());
                                     //.attr('height', bandY.bandwidth());
+                            return(rowUpdate);
                         },
                         function(exit){
                             let rowExit = exit.remove();
