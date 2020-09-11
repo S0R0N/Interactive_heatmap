@@ -641,8 +641,8 @@ and open the template in the editor.
                 return (element === "PARTIAL" || element === "NO" || element === "YES");
             }
             function filter_partial_special(element, index, array) {
-                console.log("array[0]");
-                console.log(array[0]);
+                //console.log("array[0]");
+                //console.log(array[0]);
                 return (element !== array[0]);//you have at least one different result
             }
             let fc = filter_partial_ypn;
@@ -1197,7 +1197,8 @@ and open the template in the editor.
         function updateGraph (source){
                     nodes = selected_data.descendants();
                     nodes.sort(function(a, b){return a.or - b.or;});
-                    let nodeSpaceY = 20;
+                    const nodeSpaceY = 20;
+                    const scale      = zScale(d3.select(".zcc").property("value"));
                     counter = 0;
                     nodes.forEach(function(d){
                         d.id = counter;
@@ -1205,12 +1206,11 @@ and open the template in the editor.
                         counter++;
                         return(d.id);
                     });
-
                     svg
-                        .attr("width", b_width + margin.left + margin.right )
+                        .attr("width", (b_width + margin.left + margin.right)*scale)
                         //.attr("height", nodeSpaceY*nodes.length + margin.top + margin.bottom +sample_name_heigth+20)
-                        .attr("height", nodeSpaceY*nodes.length+sample_name_heigth+20)
-                        .attr("viewBox", [0, 0, b_width + margin.left + margin.right, nodeSpaceY*nodes.length+sample_name_heigth+20])
+                        .attr("height", (nodeSpaceY*nodes.length + sample_name_heigth + 20)*scale)
+                        .attr("viewBox", [0, 0, (b_width + margin.left + margin.right)*scale, (nodeSpaceY*nodes.length + sample_name_heigth + 20)*scale])
                         //.attr("viewBox", [0, 0, b_width + margin.left + margin.right, nodeSpaceY*nodes.length + margin.top + margin.bottom +sample_name_heigth+20])
                         //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')
                     ;
@@ -1355,8 +1355,6 @@ and open the template in the editor.
                                     //    .duration(200)
                                 ;
                                     yNodeUpdate.select("text")
-                                            
-                                        
                                         .style("font-weight", function(d) {
                                             let fw = "normal";
                                             if(d.height ===0){
