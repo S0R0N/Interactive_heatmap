@@ -929,19 +929,35 @@ and open the template in the editor.
                 filterType(d,t,met_vector);
                 return(met_vector);
             }
-            
+            function getUnique(arr, comp) {
+                // store the comparison  values in array
+                const unique =  arr.map(e => e[comp])
 
+                // store the indexes of the unique objects
+                .map((e, i, final) => final.indexOf(e) === i && i)
+
+                // eliminate the false indexes & return unique objects
+                .filter((e) => arr[e]).map(e => arr[e]);
+
+               return unique;
+            }
             initJson(rawJson);
+            
             let metp_vector = filterTypeW(rawJson,"metapathway");
             let p_vector = filterTypeW(rawJson,"pathway");
+            
+            let metp_vector2 = getUnique(metp_vector,'name');
+            let p_vector2    = getUnique(p_vector,'name');
+            //console.log(getUnique(metp_vector,'name'));
+            
             //let all_vector = filterTypeW(rawJson,"all");
             //******************************************************
             //**     TRANSFORMING TO D3 HIERARCHY OBJECT JSON     **
             //******************************************************
             data_h  = d3.hierarchy(rawJson,function(d){return d.children;});
             //data_h  = d3.hierarchy({"children":all_vector,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
-            mp_data = d3.hierarchy({"children":metp_vector,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
-            p_data  = d3.hierarchy({"children":p_vector,"enabled":false,"name":"pathways","property_id":"GenProp_paths","result":rawJson.result},function(d){return d.children;});
+            mp_data = d3.hierarchy({"children":metp_vector2,"enabled":false,"name":"meta-pathways","property_id":"GenProp_metapaths","result":rawJson.result},function(d){return d.children;});
+            p_data  = d3.hierarchy({"children":p_vector2,"enabled":false,"name":"pathways","property_id":"GenProp_paths","result":rawJson.result},function(d){return d.children;});
 
             //******************************************************
             //**    INITIALIZING CUSTOM VARS IN THE D3 OBJECTS    **
