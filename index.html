@@ -26,7 +26,7 @@ and open the template in the editor.
             //##                  Variables for the main layout               ##
             //##################################################################            
             //let margin             = {top: 30, right: 30, bottom: 30, left: 30};// margenes
-            const margin             = {   top: window.innerHeight * 0.3,   left: 30,   bottom: window.innerHeight * 0.4,   right: 30 }; 
+            const margin             = {top: window.innerHeight * 0.3,   left: 30,   bottom: window.innerHeight * 0.4,   right: 30 }; 
             const b_width            = window.innerWidth - margin.left - margin.right;
             const b_height           = window.innerHeight - margin.top - margin.bottom;
             let top_banner_width     = b_width;
@@ -62,7 +62,9 @@ and open the template in the editor.
             let zScale = d3.scaleLinear()
                 .domain([0,100])
                 .range([minZoom,maxZoom]);
-            
+            let y_color = "#6c6c6c";
+            let p_color = "#cecece";
+            let n_color = "#FFFFFF";
             //var mousePosition;                                      
             //la posicion del mouse para el onhover
 
@@ -76,10 +78,12 @@ and open the template in the editor.
     //##########################################################################
     //##                       DRAWING THE TOOLTIPS                           ##
     //##########################################################################    
-    
+            //------------------------------------------------------------------
+            //------------------Expand button tool tip--------------------------
+            //------------------------------------------------------------------
             let tt1 = d3.select("body")
                 .append("span")
-                .attr("class","tt1")
+                .attr("class","tt1 expand")
                 .style("visibility","hidden")
                 .style("width","120px")
                 .style("background-color","black")
@@ -91,6 +95,139 @@ and open the template in the editor.
                 .style("z-index","101")
                 .text("When the heatmap is completely expanded, the site's response becomes slow")
             ;
+            //------------------------------------------------------------------
+            //------------------Unique filter tool tip--------------------------
+            //------------------------------------------------------------------
+            let tt1_f = d3.select("body")
+                .append("span")
+                .attr("class","tt1 unique")
+                .style("visibility","hidden")
+                .style("width","200px")
+                .style("background-color","black")
+                .style("color","#fff")
+                .style("text-align","center")
+                .style("padding","5px")
+                .style("border-radius","6px")
+                .style("position","fixed")
+                .style("z-index","101")
+                .text("The unique filter will show you the functions where at least one sample has a different value compared to the others")
+            ;
+            //------------------------------------------------------------------
+            //---------------------Color tool tips------------------------------
+            //------------------------------------------------------------------
+            let tt1_cy = d3.select("body")
+                .append("div")
+                .attr("class","tt1 c0")
+                .style("visibility","hidden")
+                .style("background-color","white")
+                .style("text-align","center")
+                .style("position","fixed")
+                .style("z-index","101")
+            ;
+            tt1_cy.append("span")
+                .style("font-size","12px")
+                .style("cursor","pointer")
+                .style("vertical-align","middle")
+                .on("click",function(){
+                    d3.select(".c0")
+                        .style("visibility","hidden")
+                    ;
+                })
+                .text("X ")
+            ;
+            tt1_cy.append("input")
+                .attr("type","color")
+                .attr("id","y_color")
+                .attr("value",y_color)
+                .on("change",function(){
+                   //change color of the respective legend 
+                    d3.select(".rect0")
+                         .style("fill",this.value);
+                    ;
+                    y_color = this.value;
+                })
+            ;
+            tt1_cy.append("label")
+                .attr("for","y_color")
+                .style("font-size","12px")
+                .text(" Choose your color")
+            ;        
+            let tt1_cp = d3.select("body")
+                .append("div")
+                .attr("class","tt1 c1")
+                .style("visibility","hidden")
+                .style("background-color","white")
+                .style("text-align","center")
+                .style("position","fixed")
+                .style("z-index","101")
+            ;
+            tt1_cp.append("span")
+                .style("font-size","12px")
+                .style("cursor","pointer")
+                .style("vertical-align","middle")
+                .on("click",function(){
+                    d3.select(".c1")
+                        .style("visibility","hidden")
+                    ;
+                })
+                .text("X ")
+            ;
+            tt1_cp.append("input")
+                .attr("type","color")
+                .attr("id","p_color")
+                .attr("value",p_color)
+                .on("change",function(){
+                   //change color of the respective legend 
+                    d3.select(".rect1")
+                         .style("fill",this.value);
+                    ;
+                    p_color = this.value;
+                })
+                ;
+            tt1_cp.append("label")
+                .attr("for","p_color")
+                .style("font-size","12px")
+                .text(" Choose your color")
+            ;
+            let tt1_cn = d3.select("body")
+                .append("div")
+                .attr("class","tt1 c2")
+                .style("visibility","hidden")
+                .style("background-color","white")
+                .style("text-align","center")
+                .style("position","fixed")
+                .style("z-index","101")
+            ;
+            tt1_cn.append("span")
+                .style("font-size","12px")
+                .style("cursor","pointer")
+                .style("vertical-align","middle")
+                .on("click",function(){
+                    d3.select(".c2")
+                        .style("visibility","hidden")
+                    ;
+                })
+                .text("X ")
+            ;
+            tt1_cn.append("input")
+                .attr("type","color")
+                .attr("id","no_color")
+                .attr("value",n_color)
+                .on("change",function(){
+                   //change color of the respective legend 
+                    d3.select(".rect2")
+                         .style("fill",this.value);
+                    ;
+                    n_color = this.value;
+                })
+            ;
+            tt1_cn.append("label")
+                .attr("for","no_color")
+                .style("font-size","12px")
+                .text(" Choose your color")
+            ;
+            console.log("testing selection");
+            console.log(tt1_cn.select("input"));
     //##########################################################################
     //##                     DRAWING THE NAVIGATION BAR                       ##
     //##########################################################################
@@ -261,6 +398,8 @@ and open the template in the editor.
                 .text("Meta-Pathways")
             ;*/
             //sdb.append("hr");
+            
+            //CHECK BOXES
             let fr = sdbf.append("div")
                 .attr("class","form-group text-center")
             ;
@@ -323,7 +462,105 @@ and open the template in the editor.
                 .attr("class","form-check-label")
                 .attr("for","fr_s")
                 .text("Unique")
+                .on("mouseover",function(){
+                    tt1_f
+                        .style("visibility","visible")
+                        .style("top",(this.getBoundingClientRect().top + this.getBoundingClientRect().height+ 3)+"px")
+                        .style("left",(this.getBoundingClientRect().left + this.getBoundingClientRect().width/2)+"px")
+                    ;
+                    }
+                )
+                .on("mouseout",function(){
+                    tt1_f
+                        .style("visibility","hidden");
+                })
             ;
+            
+            // LEGENDS
+            
+            let heatColor = d3.scaleOrdinal()
+                .domain(['YES','PARTIAL','NO'])
+                .range(['#6c6c6c','#cecece','white']);
+            ;
+            
+            /*let legend_menu = sdb
+                .append("ul")
+                .attr("class","nav nav-tabs")
+                    .append("li")
+                        .attr("class","nav-item mr-auto");*/
+            //let legends = legend_menu.append('svg')
+            sdbf.append("hr");
+            let legend_menu = sdbf.append("div")
+                //.attr("class","form-group")
+            ;
+            legend_menu.append("label")
+                .attr("for","sdbf_c")//filter menu select filter select
+                .text("Click the legends to change color")
+            ;
+            let legends = legend_menu.append('svg')
+                .attr("width","100%")
+                .attr("height",80)
+                .attr("id","sdbf_c")
+                //.attr("class","form-control")
+                .style("vertical-align", "middle")
+                .append("g")
+                    .attr('class', 'legends')
+                    .attr('transform', 'translate('+ (margin.left) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+            ;
+            
+            let GLegends = legends.selectAll(".leg")
+                    .data(['YES','PARTIAL','NO'])
+            ;
+            GLegends.join(
+                function(enter){
+                    let GLegendsEnter = enter.append("g")
+                        .attr('class', 'leg')
+                        .attr('transform', 'translate(' + (0) + ',' + (0) + ')')
+                        .style("vertical-align", "middle")
+                        .on("click",function(d,i){
+                            if(d3.select(".c"+i).style("visibility")==="hidden"){
+                                d3.select(".c"+i)
+                                    .style("visibility","visible")
+                                    //.style("top",(this.getBoundingClientRect().top + this.getBoundingClientRect().height+ 3)+"px")
+                                    .style("top",(this.getBoundingClientRect().top-3)+"px")
+                                    //.style("left",(this.getBoundingClientRect().left + this.getBoundingClientRect().width/2)+"px")
+                                    .style("left",120+"px")
+                                ;
+                            }else{
+                                d3.select(".c"+i)
+                                    .style("visibility","hidden");
+                            }
+                        })
+                    ;
+                    GLegendsEnter.append("rect")
+                        .attr("class",function(d,i){
+                            return "rect"+i;
+                        })
+                        .attr("height",legend_h)
+                        .attr("width",legend_h)
+                        .style("stroke", "grey")
+                        .style("stroke-width", 1)
+                        .attr("x",0)
+                        .attr("y",function(d,i) {
+                                return ((i*legend_h)+10);
+                            }
+                        )
+                        .attr("fill",d => heatColor(d))
+                    ;
+                    GLegendsEnter.append("text")    
+                        .attr("x", legend_h+5)
+                        .style("font-size","12px")
+                        .attr("y",function(d,i) {
+                                return ((i*legend_h)+((legend_h)*(3/4))+10 );
+                            }
+                        )
+                        .text(d =>d)
+                    ;
+                    return(GLegendsEnter);
+                })
+            ;
+            sdbf.append("hr");
+            // BUTTONS
             let sdbb = sdb.append("div")//side bar buttion
                 .attr("class","form-group text-center")
             ;
@@ -361,7 +598,7 @@ and open the template in the editor.
                 })
             ;
             sdb.append("hr");
-
+            //SELECT TWO SEARCH FUNCTION SELECTOR
             let sbdfs = sdb
                 .append("select")//navigationbar division select
                     .attr("class","ndfs select2-hidden-accessible")//nav-div-form-select
@@ -378,67 +615,11 @@ and open the template in the editor.
                 .attr("class","ndfso_names")
             ;
             sdb.append("hr");
-    //##########################################################################
-    //##                       Space for the legends                          ##
-    //##########################################################################
-            let heatColor = d3.scaleOrdinal()
-                .domain(['YES','PARTIAL','NO'])
-                .range(['#6c6c6c','#cecece','white']);
-            ;
-            let legend_menu = sdb
-                .append("ul")
-                .attr("class","nav nav-tabs")
-                    .append("li")
-                        .attr("class","nav-item mr-auto");
-            let legends = legend_menu.append('svg')
-                    .attr("width",100)
-                    .attr("height",100)
-                    .style("vertical-align", "middle")
-                    .append("g")
-                        .attr('class', 'legends')
-                        .attr('transform', 'translate('+ (margin.left) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
-            ;
-            let GLegends = legends.selectAll(".leg")
-                    .data(['YES','PARTIAL','NO'])
-            ;
-            GLegends.join(
-                function(enter){
-                    let GLegendsEnter = enter.append("g")
-                        .attr('class', 'leg')
-                        .attr('transform', 'translate(' + (0) + ',' + (0) + ')')
-                        .style("vertical-align", "middle")
-                    ;
-                    GLegendsEnter.append("rect")
-                        .attr("height",legend_h)
-                        .attr("width",legend_h)
-                        .style("stroke", "grey")
-                        .style("stroke-width", 1)
-                        .attr("x",0)
-                        .attr("y",function(d,i) {
-                                return ((i*legend_h)+10);
-                            }
-                        )
-                        .attr("fill",d => heatColor(d))
-                    ;
-                    GLegendsEnter.append("text")    
-                        .attr("x", legend_h+5)
-                        .style("font-size","12px")
-                        .attr("y",function(d,i) {
-                                return ((i*legend_h)+((legend_h)*(3/4))+10 );
-                            }
-                        )
-                        .text(d =>d)
-                    ;
-                    return(GLegendsEnter);
-                })
-            ;
-           sdb.append("hr");
+    
+    
     //##########################################################################
     //##                           ZOOM CONTROLS                              ##
     //##########################################################################
-    //<div class="slidecontainer">
-    //  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-    //</div>
             let sdzc = sdb.append("div")//side bar buttion
                 .attr("class","form-group")
             ;
@@ -818,6 +999,14 @@ and open the template in the editor.
             
         function initHeatmapData (mode){
             //console.log("starting to run initHeatmapData");
+            //******************************************************
+            //**      SETTING THE COLORS OF THE HEAT MAP          **
+            //******************************************************
+            //console.log("heatColor.range");
+            //console.log(heatColor.range([y_color,p_color,n_color]));
+            heatColor.range([y_color,p_color,n_color]);
+            // HeatColor.range The user defined colors
+            // Get the user defined colors from the color inputs. 
             
             //******************************************************
             //**      SETTING THE YES NO PARTIAL FILTER           **
