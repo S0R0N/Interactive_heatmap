@@ -661,6 +661,7 @@ and open the template in the editor.
             //let dv = d3.select("body")  
             let dv = mct
                 .append("div")
+                //.append("g")
                 .attr("class","svg")
                 .style("z-index",0)
             ;
@@ -668,28 +669,37 @@ and open the template in the editor.
     //##                     HEATMAP CONTENT I ZOOM THIS                      ##
     //##########################################################################
             // this object is the window to see the target of the zoom.
+            // remember to scale this up
+            
             let svg = dv
-                    .append("svg")
-                    .attr('transform', 'translate('+ (0) + ',' + (0) + ')')
+                .append("svg")
+                .attr('transform', 'translate('+ (0) + ',' + (0) + ')')
             ;
             let gZoom = svg.append("g")
                 .attr("class","chart")
-                .attr('transform', 'translate('+margin.left+', '+margin.top+ ')')
-           ;
-            // CREATING THE HEATMAP DRAWING SPACE 
-            let top_banner_inside = gZoom.append('g')
+                //.attr('transform', 'translate('+margin.left+', '+margin.top+ ')')
+            ;
+            /*let top_banner_inside = dv.append('div')
                     .attr('class', 'top_banner_in')
-                    .attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+                    //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+                    .style("position","fixed")
+                    .style("width","100%")
+                    .style("top",10)
+                    .style("z-index", 1001)
+                    .style("opacity",1)
+            ;*/
+            //let GxNodes = top_banner_inside.append('svg')
+            let GxNodes = gZoom.append('g')
+                .attr('class', 'xn')
+                .attr("height",sample_name_heigth)
+                .attr("width",heatmapWidth)
+                .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (0) + ')')
             ;
             
+            // CREATING THE HEATMAP DRAWING SPACE 
             let heatmap = gZoom.append('g').attr('class', 'heatmap')
                 .attr('transform', 'translate('+ (0) + ',' + (sample_name_heigth+20) + ')');// se divide entre dos para colocarlo en la mitad
 
-            let GxNodes = top_banner_inside.append('g')
-                .attr('class', 'xn')
-                .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (0) + ')')
-            ;
-    
             let GyLinks = heatmap.append('g')
                     //var yLink = heatmap.append('g')
                         .attr('class', 'yl')
@@ -867,19 +877,7 @@ and open the template in the editor.
                     }
                 )
             ;
-            /*sdbb.select(".rpb")
-                .on("click",function(){
-                    console.log("mp_data.descendants()");
-                    console.log(mp_data.descendants()[0].data.result);
 
-                    console.log("the single sample of every");
-                    console.log(mp_data.descendants()[0].data.result.every(filter_partial));
-                    // have to extract those decendants that their nodes are different to no
-                    console.log("the for each");
-                    console.log(mp_data.descendants().filter(filteringLoop));
-                    }
-                )
-            ;*/
             //######################################################################
             //##          INITIALIZING THE CHECKBOXES TO FILTER DATA              ##
             //######################################################################
@@ -956,26 +954,38 @@ and open the template in the editor.
                         samples  = res.sample_names;
                         rawJson  = res.property_tree;
                         let nodeSpaceX = heatmapWidth/samples.length;
+                        GxNodes.append('rect')
+                            .attr('transform', 'translate('+ (0) + ',' + (4.5) + ')')// se divide entre dos para colocarlo en la mitad
+                            .style("position","fixed")
+                            .style("width","100%")
+                            .style("fill","white")
+                            .style("height",sample_name_heigth)
+                            .style("opacity",0.5)
+                        ;
                         let xNode = GxNodes.selectAll('g.x-node')
                         .data(samples);
                         xNode.join(
                             function(enter){
                                 let xNodeEnter = enter
                                         .append("g")
-                                        .attr('class',"x-node");
+                                        .attr('class',"x-node")
+                                        .style("position","relative")
+                                        .style("z-index",1000)
+                                    ;
                                     xNodeEnter.append("text")
                                         .attr('class',"x-node")
                                         .style("text-anchor", 'start')
                                         .attr("font-family", "Arial, sans-serif")
                                         .attr("font-size", 12)
                                         .style('fill', "white")
+                                        .style("position","relative")
+                                        .style("z-index",1000)
                                         .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; })
                                         .text(function(d) { return d; })
                                         .transition()
                                             .duration(intro_animation)
                                                 .style('fill', "black")
                                     ;
-                                    
                                 return(xNodeEnter);
                             },
                             function(update){
@@ -1332,10 +1342,16 @@ and open the template in the editor.
                         .attr("scale",d3.event.transform.k)
                     ;*/
                     gZoom.transition()
+                    //svg.transition()
                         .duration(1000)
                         .attr("transform", " translate("+0+ ","+0+")  scale(" + d3.event.transform.k+")")
                         .attr("scale",d3.event.transform.k)
                     ;
+                    /*GxNodes.transition()
+                        .duration(1000)
+                        .attr("transform", " translate("+0+ ","+0+")  scale(" + d3.event.transform.k+")")
+                        .attr("scale",d3.event.transform.k)
+                    ;*/
                     //SCALING THE SVG SO I EVEN IF I ZOOM I CAN STILL EXPLORE THE WHOLE OBJECT
                     svg.transition()
                         .duration(1000)
@@ -1347,20 +1363,22 @@ and open the template in the editor.
                     ;
                     //SCALING THE Y POSITION OF THE SCROLL BAR TO KEEP THE SCREEN ORIGINAL COORDINATE. BEFORE ZOOMING. 
                     mct.node().scrollTo(0, scrollRatio*mct.property("scrollHeight"));
-                    transform = d3.event.transform;
+                    //transform = d3.event.transform;
                 })
-                
                 .scaleExtent([0.2, 1.05])
             ;
 
-            svg.call(zoomv)
+            //svg.call(zoomv)
+            gZoom.call(zoomv)
                 .on("dblclick.zoom", null)
                 .on("wheel.zoom", null)
                 .on("touchstart.zoom", null)
                 .on("touchmove.zoom", null)
                 .on("touchend.zoom", null)
             ;
-            svg.call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(0.5));
+            //svg.call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(0.5));
+            gZoom.call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(0.5));
+            //GxNodes.call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(0.5));
             d3.select(".zcc").property("value",  50);
             svg
                 .attr("width", (b_width + margin.left + margin.right))
@@ -1369,13 +1387,20 @@ and open the template in the editor.
                 .attr("viewBox", [0,0, (b_width + margin.left + margin.right)*0.5, (nodeSpaceY*(selected_data.descendants().length) +sample_name_heigth+20)*0.5])
                 //.attr("viewBox", [0,0, (b_width + margin.left + margin.right)*0.5, (nodeSpaceY*(selected_data.descendants().length) + margin.top + margin.bottom +sample_name_heigth+20)*0.5])
             ;
+            //gZoom
             gZoom
                 .attr("transform","scale(0.5)")
                 .attr("scale",0.5)
             ;
+            /*GxNodes
+                .attr("transform","scale(0.5)")
+                .attr("scale",0.5)
+            ;*/
             sdzc.on("input", function(d){
-                zoomv.scaleTo(svg,zScale(d3.select(".zcc").property("value")));
-                gZoom.attr("scale",zScale(d3.select(".zcc").property("value")));
+                //zoomv.scaleTo(svg,zScale(d3.select(".zcc").property("value")));
+                zoomv.scaleTo(gZoom,zScale(d3.select(".zcc").property("value")));
+                //gZoom.attr("scale",zScale(d3.select(".zcc").property("value")));
+                //GxNodes.attr("scale",zScale(d3.select(".zcc").property("value")));
             });
             
             updateGraph(selected_data);
