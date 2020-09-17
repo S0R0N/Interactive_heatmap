@@ -648,6 +648,20 @@ and open the template in the editor.
                 .style("position","relative")
                 .style("box-shadow","0 0 5px 3px rgba(0,0,0,0.25) inset")
                 .style("overflow-y","scroll")
+                .on("scroll",function(){
+                    //I am moving it, now to make it move like jagger
+                    /*console.log("d3.select(.chart).attr(scale)");
+                    console.log(d3.select(".chart").attr("scale"));*/
+                    GxNodes.attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (mct.property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
+                    /*console.log("mct");
+                    console.log(mct.property("scrollTop"));
+                    console.log("ht");
+                    console.log(ht.property("scrollTop"));
+                    console.log("bo");
+                    console.log(bo.property("scrollTop"));*/
+                    //this.setAttribute('y', gZoom.scrollTop + 50);
+                    
+                })
                     
             ;
     //##########################################################################
@@ -664,6 +678,7 @@ and open the template in the editor.
                 //.append("g")
                 .attr("class","svg")
                 .style("z-index",0)
+                
             ;
     //##########################################################################
     //##                     HEATMAP CONTENT I ZOOM THIS                      ##
@@ -677,6 +692,11 @@ and open the template in the editor.
             ;
             let gZoom = svg.append("g")
                 .attr("class","chart")
+                .attr("transform","scale(0.5)")
+                .attr("scale",0.5)
+                .style("position","relative")
+                .style("z-index","1001")
+                
                 //.attr('transform', 'translate('+margin.left+', '+margin.top+ ')')
             ;
             /*let top_banner_inside = dv.append('div')
@@ -689,28 +709,34 @@ and open the template in the editor.
                     .style("opacity",1)
             ;*/
             //let GxNodes = top_banner_inside.append('svg')
+            
+            // CREATING THE HEATMAP DRAWING SPACE 
+            let heatmap = gZoom.append('g').attr('class', 'heatmap')
+                .attr('transform', 'translate('+ (0) + ',' + (sample_name_heigth+20) + ')')
+                .style("position","relative")
+                .style("z-index",1000)
+            ;// se divide entre dos para colocarlo en la mitad
+            /*let GyLinks = heatmap.append('g')
+                    //var yLink = heatmap.append('g')
+                        .attr('class', 'yl')
+                        .attr('transform', 'translate(' + 1e-6 + ',' + 1e-6 + ')');*/
+            let GyNodes = heatmap.append('g')
+                        .attr('class', 'yn')
+                        .attr('transform','translate(' + (Y_link_lenght+ heatmapWidth + link_margin + 10) + ',' + (1e-6) + ')')
+            ;//fixind the position of the labels for the boxes
+                
             let GxNodes = gZoom.append('g')
                 .attr('class', 'xn')
                 .attr("height",sample_name_heigth)
                 .attr("width",heatmapWidth)
                 .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (0) + ')')
+                .style("position","relative")
+                .style("z-index","1001")
             ;
-            
-            // CREATING THE HEATMAP DRAWING SPACE 
-            let heatmap = gZoom.append('g').attr('class', 'heatmap')
-                .attr('transform', 'translate('+ (0) + ',' + (sample_name_heigth+20) + ')');// se divide entre dos para colocarlo en la mitad
-
-            let GyLinks = heatmap.append('g')
-                    //var yLink = heatmap.append('g')
-                        .attr('class', 'yl')
-                        .attr('transform', 'translate(' + 1e-6 + ',' + 1e-6 + ')');
-            let GyNodes = heatmap.append('g')
-                        .attr('class', 'yn')
-                        .attr('transform','translate(' + (Y_link_lenght+ heatmapWidth + link_margin + 10) + ',' + (1e-6) + ')');//fixind the position of the labels for the boxes
             
             let table = heatmap.append('g').attr('class', 'table')
                     // depronto me toca borrar el Y de linkheight +link_margin, porque no lo tuve en cuenta antes
-                    .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (0) + ')');
+                .attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (0) + ')');
                     //.attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (Y_link_lenght + link_margin) + ')');
             //##################################################################
             //##                   HELPER FUNCTIONS                           ##
@@ -955,12 +981,14 @@ and open the template in the editor.
                         rawJson  = res.property_tree;
                         let nodeSpaceX = heatmapWidth/samples.length;
                         GxNodes.append('rect')
-                            .attr('transform', 'translate('+ (0) + ',' + (4.5) + ')')// se divide entre dos para colocarlo en la mitad
-                            .style("position","fixed")
-                            .style("width","100%")
+                            .attr('transform', 'translate('+ (0) + ',' + (8) + ')')// se divide entre dos para colocarlo en la mitad
+                            //.style("position","fixed")
+                            .style("width",heatmapWidth)
                             .style("fill","white")
                             .style("height",sample_name_heigth)
-                            .style("opacity",0.5)
+                            .style("opacity",0.7)
+                            //.style("position","relative")
+                            //.style("z-index",1000)
                         ;
                         let xNode = GxNodes.selectAll('g.x-node')
                         .data(samples);
@@ -969,17 +997,19 @@ and open the template in the editor.
                                 let xNodeEnter = enter
                                         .append("g")
                                         .attr('class',"x-node")
-                                        .style("position","relative")
-                                        .style("z-index",1000)
+                                        //.style("position","relative")
+                                        //.style("z-index",1001)
                                     ;
                                     xNodeEnter.append("text")
                                         .attr('class',"x-node")
                                         .style("text-anchor", 'start')
                                         .attr("font-family", "Arial, sans-serif")
                                         .attr("font-size", 12)
+                                        //*.style("font-weight","bold")
                                         .style('fill', "white")
-                                        .style("position","relative")
-                                        .style("z-index",1000)
+                                        //.style("font-weight","bold")
+                                        //.style("position","relative")
+                                        //.style("z-index",1001)
                                         .attr("transform", function(d,i) { return "translate(" + ((nodeSpaceX*i) + (nodeSpaceX/2))+ "," + sample_name_heigth + ")"+" rotate(270)"; })
                                         .text(function(d) { return d; })
                                         .transition()
@@ -1347,6 +1377,8 @@ and open the template in the editor.
                         .attr("transform", " translate("+0+ ","+0+")  scale(" + d3.event.transform.k+")")
                         .attr("scale",d3.event.transform.k)
                     ;
+                    //GxNodes.attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (mct.property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
+                    //GxNodes.attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (scrollRatio*mct.property("scrollHeight")) + ')');
                     /*GxNodes.transition()
                         .duration(1000)
                         .attr("transform", " translate("+0+ ","+0+")  scale(" + d3.event.transform.k+")")
@@ -1392,6 +1424,7 @@ and open the template in the editor.
                 .attr("transform","scale(0.5)")
                 .attr("scale",0.5)
             ;
+            GxNodes.attr('transform', 'translate(' + (Y_link_lenght + link_margin) + ',' + (mct.property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
             /*GxNodes
                 .attr("transform","scale(0.5)")
                 .attr("scale",0.5)
