@@ -57,7 +57,8 @@ function draw_top_navbar(topnavbar_parameters){
             .attr("class","nav-item active")
             .append("a")
                 .attr("class","nav-link")
-                .attr("href","./html/upload_view.html")
+                //.attr("href","./html/upload_view.html")
+                .attr("href","#")
                 .text("Upload")
     ;
     // If you want to add controls to the navbar add here appened to topnavbar elements
