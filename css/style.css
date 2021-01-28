@@ -1,0 +1,65 @@
+.node.node-terminal:hover {
+    cursor: default;
+}
+
+.node:hover {
+    fill: #b0b0b0;
+    cursor: pointer;
+}
+
+.node.node-terminal {
+    fill: #008837;
+    stroke: #fff;
+}
+
+.node {
+    fill: #ddd;
+    stroke: #fff;
+}
+
+.label {
+    font: 12px sans-serif;
+    text-anchor: middle;
+}
+
+.link_out {
+    fill: #848484;
+}
+
+.link_out:hover {
+    fill: black;
+    cursor: help;
+}
+
+.y-axis path,
+.y-axis line {
+    fill: none;
+    stroke-width: 0;
+}
+
+.x-axis path,
+.x-axis line {
+    fill: none;
+    stroke-width: 0;
+}
+
+.diagram_header {
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.90);
+}
+
+.legend-row {
+    pointer-events: none;
+}
+
+.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: black;
+    color: white;
+    border: 0;
+    border-radius: 5px;
+    display: none;
+}
