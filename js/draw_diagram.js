@@ -585,7 +585,7 @@ function draw_heatmap(general_parameters,sample_names){
         .attr('class', 'yn')
         
         //.attr('transform','translate(' + (heatmap_parameters["Y_link_lenght"]+ heatmap_width + heatmap_parameters["link_margin"] + 10) + ',' + (1e-6) + ')')
-        .attr('transform','translate(' + (heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')
+        .attr('transform','translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')
         //.attr('transform','translate(' + (heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')
         .attr("data-intro_animation_time",heatmap_parameters.intro_animation_time)
     ;
@@ -596,8 +596,8 @@ function draw_heatmap(general_parameters,sample_names){
         //.attr("height",heatmap_parameters.sample_name_height)
         //.attr("width",heatmap_width)
         //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"] + heatmap_parameters["link_margin"]) + ',' + (0) + ')')
-        .attr("data-x_position",heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin)
-        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
+        .attr("data-x_position",heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin)
+        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
         .style("position","relative")
         .style("z-index","1001")
     ;
@@ -606,7 +606,7 @@ function draw_heatmap(general_parameters,sample_names){
     let table = heatmap.append('g')
         .attr('class', 'table')
         //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"] + heatmap_parameters["link_margin"]) + ',' + (0) + ')')
-        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
+        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
         .attr("data-heatmapWidth",heatmap_width)
         .attr("data-sample_names_length",sample_names.length)
     ;
@@ -615,13 +615,13 @@ function draw_heatmap(general_parameters,sample_names){
         .attr('class', 'metadata_icon_holder')
         //.attr("width",heatmap_parameters.heatmap_icon_container_width)
         //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"]/3) + ',' + (0) + ')')
-        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
+        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin ) + ',' + (0) + ')')
     ;
     //second icon the dowload protein icon
     let download_icon_holder = heatmap.append('g')
         .attr('class', 'download_icon_holder')
         //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"]/3)*2 + ',' + (0) + ')')
-        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
+        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
     ;
     //third  icon the expand compress function
 }

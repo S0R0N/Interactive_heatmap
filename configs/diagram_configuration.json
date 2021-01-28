@@ -40,6 +40,7 @@
         {
             "Y_link_lenght":40,
             "heatmap_icon_container_width":20,
+            "heatmap_controls_left_margin":20,
             "heatmap_controls_margin":5,
             "heatmap_function_label_width": 240,
             "heatmap_sample_square_size": 20,
