@@ -561,7 +561,7 @@ function initHeatmapData (){
     
 
     //d3.select(".xn").attr('transform', 'translate(' + (heatmap_parameters.Y_link_lenght + heatmap_parameters.link_margin) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
-    d3.select(".xn").attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
+    d3.select(".xn").attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
     d3.select(".zcc").on("input", function(d){
         zoomv.scaleTo(d3.select(".chart"),zScale(d3.select(".zcc").property("value")));
     });
@@ -654,15 +654,17 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
     //d3.selectAll("."+String(d.idx)).style("opacity",1);//rows
     //Rows on
     //console.log("checking if you can get to the this parent to access its class");
-    console.log(d3.select(this.parentNode).data()[0].idx);
+    //console.log(d3.select(this.parentNode).data()[0].idx);
     d3.selectAll("."+String(d3.select(this.parentNode).data()[0].idx)).style("opacity",1);//rows
     //Columns on
     d3.selectAll(".heatmap_col"+i).style("opacity",1);//cols
+    d3.selectAll(".x-node"+i).attr("font-size", 18);
     
 }
-function onmouseout_heatmap_squares(d){
+function onmouseout_heatmap_squares(d,i){
     //switch_opacity(d3.select(this),1);
     //d3.selectAll("."+d.idx).style("opacity",1);
+    d3.selectAll(".x-node"+i).attr("font-size", 12)
     viz_ligths_on();
 }
 //@param {object} selected_data the JSON tree filtered data

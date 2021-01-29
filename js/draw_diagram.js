@@ -57,8 +57,8 @@ function draw_top_navbar(topnavbar_parameters){
             .attr("class","nav-item active")
             .append("a")
                 .attr("class","nav-link")
-                //.attr("href","./html/upload_view.html")
-                .attr("href","#")
+                .attr("href","./html/upload_view.html")
+                //.attr("href","#")
                 .text("Upload")
     ;
     // If you want to add controls to the navbar add here appened to topnavbar elements
@@ -946,7 +946,7 @@ function draw_sample_names(sample_names,general_parameters){
                     //.attr('class',)
                 ;
                 xNodeEnter.append("text")
-                    .attr('class',"x-node")
+                    .attr('class',function (d,i) {return "x-node x-node"+i ;})//"x-node"+i+
                     .style("text-anchor", 'start')
                     .attr("font-family", "Arial, sans-serif")
                     .attr("font-size", "12px")
