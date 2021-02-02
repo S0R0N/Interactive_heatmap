@@ -558,8 +558,6 @@ function initHeatmapData (){
         .attr("transform","scale("+zScale(d3.select(".zcc").property("value"))+")")
         .attr("scale",zScale(d3.select(".zcc").property("value")))
     ;
-    
-
     //d3.select(".xn").attr('transform', 'translate(' + (heatmap_parameters.Y_link_lenght + heatmap_parameters.link_margin) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
     d3.select(".xn").attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
     d3.select(".zcc").on("input", function(d){
@@ -660,12 +658,43 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
     d3.selectAll(".heatmap_col"+i).style("opacity",1);//cols
     d3.selectAll(".x-node"+i).attr("font-size", 18);
     
+    console.log("parent data");
+    console.log(d3.select(this.parentNode).data()[0]);
+    //Make the tool tips visble and load the texts
+    // Make the tool tips visible
+    d3.select(".value_tt")
+        .style("visibility","visible")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top+60)+"px")
+        .text(d3.select(this).data())
+    ;
+    
+    /*d3.select(".sample_name_tt")
+        .style("visibility","visible")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left-20)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top-40)+"px")
+    ;*/
+    //d3.select(".sample_name_tt_text").text(d3.select(".x-node"+i).text());
+    
+    d3.select(".function_name_tt")
+        .style("visibility","visible")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top+20)+"px")
+        .text(d3.select(this.parentNode).data()[0].data.name)
+    ;
+    // Set positions for each tool tip
+    //  The position will depend on the mouse and the limits of the heatmap
+    
 }
 function onmouseout_heatmap_squares(d,i){
     //switch_opacity(d3.select(this),1);
     //d3.selectAll("."+d.idx).style("opacity",1);
     d3.selectAll(".x-node"+i).attr("font-size", 12)
     viz_ligths_on();
+    //Make the tool tips invisble. 
+    d3.select(".value_tt").style("visibility","hidden");
+    d3.select(".sample_name_tt").style("visibility","hidden");
+    d3.select(".function_name_tt").style("visibility","hidden");
 }
 //@param {object} selected_data the JSON tree filtered data
 //@return {void}  draws the interactive heatmap elements
@@ -965,33 +994,54 @@ function updateGraph (){
                     .style('opacity', 1)
                     .attr('class',function(d) {return 'download_icon '+ d.idx;})
                     .attr('transform', function(d, i) {
-                        return 'translate(0, ' + ((d.nodeY)+ (d3.select(".div_svg").attr("data-nodeSpaceY")/2)) + ')';
+                        //return 'translate(0, ' + ((d.nodeY)+ (d3.select(".div_svg").attr("data-nodeSpaceY")/2)) + ')';
+                        return 'translate(0, ' + ((d.nodeY) - (d3.select(".div_svg").attr("data-nodeSpaceY")/2))+ ')';
                     })
-                    .append('text')
-                        .attr('font-family', 'FontAwesome')
-                        .attr('class', function(d,i) { return 'download_icon_text '+d.idx;} )
-                        .text(function(d) { return '\uf019' ;})
-                        .on("mouseover", function (hovered_tree_node) {
+                    .on("click", function (hovered_tree_node) {
                             //Activating the text
-                            d3.select(this)
-                                    .text(function(d) { return '\uf019' ;})
-                                    .style("cursor","pointer")
-                            ;
-
-                            let tooltip = d3.select(".toolt");
+                        let tooltip = d3.select(".download_protein_tt");
+                        d3.select(this)
+                                //.text(function(d) { return '\uf019' ;})
+                                .style("cursor","pointer")
+                        ;
+                        if(tooltip.style("visibility")==="hidden"){
                             tooltip.attr("data-class",d3.select(this).attr("class"));
-
                             generate_download_tooltip_html_content(tooltip, hovered_tree_node);
+                            console.log("size of the download tool tip");
+                            console.log(d3.select(this).node().getBoundingClientRect());
+                            tooltip
+                                .style("visibility","visible")
+                                .style("left",(d3.select(this).node().getBoundingClientRect().left+10)+"px")
+                                .style("top",(d3.select(this).node().getBoundingClientRect().top)+"px")
+                                /*.on("mouseout", function () {
+                                    console.log("I entered the mouseout of the download tool tip");
+                                    d3.select(".download_protein_tt").style("visibility","hidden");
+                                })*/
+
+                            ;
+                        }else{
+                            tooltip.style("visibility","hidden");
+                        }
+                        
+
+                        
+                        
+                        
+                        //set position
 
                       })
-                      .on("mouseout", function () {
-
-                            d3.select(this)
-                                    .text(function(d) { return '\uf019' ;})
-                                    .style("cursor","auto")
-                            ;
-                      });
-
+                      /*.on("mouseout", function () {
+                        //d3.select(".download_protein_tt").style("visibility","hidden");
+                        d3.select(this)
+                      //          .text(function(d) { return '\uf019' ;})
+                                .style("cursor","auto")
+                        ;
+                      })*/
+                    .append("image")
+                    .attr("xlink:href","./assets/firefox_download.png")
+                    .attr("width", 15)
+                    .attr("height", 21)
+                    
                 ;  
                 iconEnter.transition()
                     .duration(d3.select(".yn").attr("data-intro_animation_time"))
@@ -1005,7 +1055,8 @@ function updateGraph (){
                         .transition()
                             .duration(1500)
                             .attr('transform', function(d, i) {
-                                return 'translate(0, ' + (d.nodeY + (d3.select(".div_svg").attr("data-nodeSpaceY")/2)) + ')';
+                                //return 'translate(0, ' + (d.nodeY + (d3.select(".div_svg").attr("data-nodeSpaceY")/2)) + ')';
+                                return 'translate(0, ' + ((d.nodeY) - (d3.select(".div_svg").attr("data-nodeSpaceY")/2))+ ')';
                             })
                             .style('opacity', 1)
                             ;

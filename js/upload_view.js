@@ -38,6 +38,7 @@ function create_dropzone()
             clickable: true,
             createImageThumbnails: false,
             maxFilesize: 2000,
+            timeout:60000,
             withCredentials: true,
             previewsContainer: ".dropzone-previews",
             addedfile: function (file_data) {
@@ -112,7 +113,7 @@ function create_dropzone()
                     {
                         if (file_data.xhr.status === 0)
                         {
-                            console.error('Failed to connect to server')
+                            console.error('Failed to connect to server or file too large increase the timeout');
                         }
                         else
                         {

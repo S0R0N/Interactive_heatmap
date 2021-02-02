@@ -654,7 +654,76 @@ function draw_tool_tips(general_content_parameters){
         .style("border-radius","6px")
         .style("position","fixed")
         .style("z-index","101")
-        .text("When the heatmap is completely expanded, the site's response becomes slow")
+        .text("Warning might slow the site's response")
+    ;
+    let download_protein_tt = d3.select("body")
+        .append("span")
+        .attr("class","download_protein_tt")
+        .style("left","0px")
+        .style("top","0px")
+        .style("display","block")
+        .style("opacity",0.7)
+        .style("visibility","hidden")
+        .style("background-color","black")
+        .style("color","#fff")
+        .style("text-align","center")
+        .style("padding","5px")
+        .style("border-radius","6px")
+        .style("position","fixed")
+        .style("z-index","101")
+        .text("the download tooltip")
+    ;
+
+    let function_name_tt = d3.select("body")
+        .append("span")
+        .attr("class","function_name_tt")
+        .style("left","0px")
+        .style("top","0px")
+        .style("opacity",0.7)
+        .style("visibility","hidden")
+        .style("background-color","black")
+        .style("color","#fff")
+        .style("text-align","center")
+        .style("padding","5px")
+        .style("border-radius","6px")
+        .style("position","fixed")
+        .style("z-index","101")
+        .text("here I will insert the function name")
+    ;
+    /*let sample_name_tt = d3.select("body")
+        .append("span")
+        .attr("class","sample_name_tt")
+        .style("left","0px")
+        .style("top","0px")
+        .style("opacity",0.7)
+        .style("visibility","hidden")
+        .style("background-color","black")
+        .style("color","#fff")
+        .style("text-align","center")
+        .style("padding","5px")
+        .style("border-radius","6px")
+        .style("position","fixed")
+        .style("z-index","101")
+        .append("text")
+            .attr("class","sample_name_tt_text")
+            .attr("transform","rotate(90)")
+            .text("?")
+    ;*/
+    let value_tt = d3.select("body")
+        .append("span")
+        .attr("class","value_tt")
+        .style("left","0px")
+        .style("opacity",0.7)
+        .style("top","0px")
+        .style("visibility","hidden")
+        .style("background-color","black")
+        .style("color","#fff")
+        .style("text-align","center")
+        .style("padding","5px")
+        .style("border-radius","6px")
+        .style("position","fixed")
+        .style("z-index","101")
+        .text("here I will insert the value")
     ;
     //------------------------------------------------------------------
     //------------------Unique filter tool tip--------------------------
@@ -982,16 +1051,23 @@ function generate_download_tooltip_html_content(tooltip, hovered_tree_node) {//t
         if (result_key === null)
         {
             let fasta_url = back_end_url + 'fasta/' + genome_property_id + '/' + step_number;
-            let download_link_one = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url +'">' + 'TOP FASTA' + '</a></p>';
-            let download_link_two = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url + '?all=true' + '">' + 'ALL FASTA' + '</a></p>';
+            //let download_link_one = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url +'">' + 'TOP FASTA' + '</a></p>';
+            //let download_link_two = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url + '?all=true' + '">' + 'ALL FASTA' + '</a></p>';
+            let download_link_one = '<a target="_blank" rel="noopener noreferrer" href="' + fasta_url +'">' + 'Top 10 protein sequences' + '</a><br>';
+            let download_link_two = '<a target="_blank" rel="noopener noreferrer" href="' + fasta_url + '?all=true' + '">' + 'All protein sequences' + '</a>';
             tooltip.html(download_link_one + download_link_two);
         }
         else {
             let fasta_url = back_end_url + 'fasta/' + genome_property_id + '/' + step_number + '?result_key=' + result_key;
-            let download_link_one = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url +'">' + 'TOP FASTA' + '</a></p>';
-            let download_link_two = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url + '&all=true' + '">' + 'ALL FASTA' + '</a></p>';
+            //let download_link_one = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url +'">' + 'TOP FASTA' + '</a></p>';
+            //let download_link_two = '<p><a target="_blank" rel="noopener noreferrer" href="' + fasta_url + '&all=true' + '">' + 'ALL FASTA' + '</a></p>';
+            let download_link_one = '<a target="_blank" rel="noopener noreferrer" href="' + fasta_url +'">' + 'Top 10 protein sequences' + '</a><br>';
+            let download_link_two = '<a target="_blank" rel="noopener noreferrer" href="' + fasta_url + '?all=true' + '">' + 'All protein sequences' + '</a>';
             tooltip.html(download_link_one + download_link_two);
         }
+        
+        //set tooltip location depending on the object?
+        //making it visible
     }).catch(function (err) {
         console.log(err);
     });
