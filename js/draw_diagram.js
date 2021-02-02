@@ -591,13 +591,21 @@ function draw_heatmap(general_parameters,sample_names){
     ;
     // GxNodes contains the sample names
     
-    let GxNodes = gZoom.append('g')
+    let GxNodes = gZoom.append('g')//you can intercept here for a rectangle to generate the blur
+        /*.append("rect")
+            .attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+            .style("fill","white")
+            .style("opacity",0.7)
+        .append("g")*/
         .attr('class', 'xn')
         //.attr("height",heatmap_parameters.sample_name_height)
         //.attr("width",heatmap_width)
         //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"] + heatmap_parameters["link_margin"]) + ',' + (0) + ')')
         .attr("data-x_position",heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin)
         .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
+        .style("display","block")
+        /*.style("fill","white")
+        .style("opacity",0.7)*/
         .style("position","relative")
         .style("z-index","1001")
     ;
@@ -992,17 +1000,29 @@ function draw_sample_names(sample_names,general_parameters){
     let general_content_parameters   = general_parameters["general_content"];
     let heatmap_parameters           = general_content_parameters["heatmap"];
     //let margin_parameters            = general_parameters["margins"];
-    //let heatmap_width                = calculate_heatmap_width(heatmap_parameters,sample_names);
+    let heatmap_width                = calculate_heatmap_width(heatmap_parameters,sample_names);
     let nodeSpaceX                   = heatmap_parameters.heatmap_sample_square_size;
     let GxNodes = d3.select(".xn")
     ;
     //This rect is the gaussian blur to make the sample square visible when scrolling down. But, it is not working on firefox
-    GxNodes
+    /*GxNodes
         .append('rect')
             .attr('transform', 'translate('+ (0) + ',' + (8) + ')')// se divide entre dos para colocarlo en la mitad
             .style("fill","white")
             .style("opacity",0.7)
-        ;
+        ;*/
+    GxNodes
+        .append("rect")
+        //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+        .style("position","relative")
+        .style("z-index","1000")
+        .style("display","block")
+        .style("width",(heatmap_width+2)+"px")//heatmap widh
+        .style("height",heatmap_parameters.sample_name_height+"px")//sample height
+        .attr("transform", "translate(-2,5)")
+        .style("fill","white")
+        .style("opacity",0.7)
+    ;
     let xNode = GxNodes.selectAll('g.x-node')
         .data(samples);
     xNode.join(
@@ -1012,6 +1032,8 @@ function draw_sample_names(sample_names,general_parameters){
                     //.attr('class',"x-node")
                     //.attr('class',(function (d,i) {return "heatmap_col"+i ;})+" x-node")
                     .attr('class',(function (d,i) {return "x-node heatmap_col heatmap_col"+i ;}))
+                    //.style("position","relative")
+                    //.style("z-index","1002")
                     //.attr('class',)
                 ;
                 xNodeEnter.append("text")
@@ -1039,6 +1061,18 @@ function draw_sample_names(sample_names,general_parameters){
             return(xNodeExit);
         }
     );
+    /*GxNodes
+        .append("rect")
+        //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+        .style("position","relative")
+        .style("z-index","1000")
+        .style("display","block")
+        .style("width","250px")//heatmap widh
+        .style("height",heatmap_parameters.sample_name_height+"px")//sample height
+        .attr("transform", "translate(0,8)")
+        .style("fill","white")
+        .style("opacity",0.7)
+    ;*/
 }
 
 
