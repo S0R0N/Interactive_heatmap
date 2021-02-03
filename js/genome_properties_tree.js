@@ -658,10 +658,10 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
     d3.selectAll(".heatmap_col"+i).style("opacity",1);//cols
     d3.selectAll(".x-node"+i).attr("font-size", 18);
     
-    console.log("parent data");
+    /*console.log("parent data");
     console.log(d3.select(this).node().getBoundingClientRect().top);
     console.log(d3.select(".mct").node().getBoundingClientRect().height);
-    console.log(parseInt(d3.select(".value_tt").style("height")));
+    console.log(parseInt(d3.select(".value_tt").style("height")));*/
     //Make the tool tips visble and load the texts
     // Make the tool tips visible
     // Are the tool tips close to the bottom border?
