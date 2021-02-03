@@ -665,56 +665,58 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
     //Make the tool tips visble and load the texts
     // Make the tool tips visible
     // Are the tool tips close to the bottom border?
-    const ygap1 =20;
-    const ygap2 =60;
-    const xgap  =20;
+    let ygap_functions = 20;
+    let ygap_values    = 60;
+    let ygap_samples   = 40;
+    
+    let xgap_functions = 20;
+    let xgap_values    = 20;
+    let xgap_samples   = -50;
     const tt_bottom_position           = d3.select(".mct").node().getBoundingClientRect().height - d3.select(this).node().getBoundingClientRect().top;
-    const tt_bottom_position_threshold = ygap2+parseInt(d3.select(".value_tt").style("height"));
+    const tt_bottom_position_threshold = ygap_values+parseInt(d3.select(".value_tt").style("height"));
+    //need the width of the sample name tt
+    //need the top position of the mouse
+    // check difference and set value for the gaps. 
     if(tt_bottom_position<=tt_bottom_position_threshold){
         console.log("it is minor than the threshold");
-        d3.select(".function_name_tt")
-        .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top-ygap1)+"px")
-        .text(d3.select(this.parentNode).data()[0].data.name)
-    ;
-    
-    d3.select(".value_tt")
-        .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top-ygap2)+"px")
-        .text(d3.select(this).data())
-    ;
-    
-    /*d3.select(".sample_name_tt")
-        .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left-20)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top-40)+"px")
-    ;*/
-    //d3.select(".sample_name_tt_text").text(d3.select(".x-node"+i).text());
+        ygap_functions = -20;
+        ygap_values    = -60;
+        ygap_samples   = -40;
+        
+        xgap_functions = 20;
+        xgap_values    = 20;
+        xgap_samples   = -50;
     }else{
-        console.log("it is bigger than the threshold");
-        d3.select(".function_name_tt")
+        ygap_functions = 20;
+        ygap_values    = 60;
+        ygap_samples   = 40;
+        
+        xgap_functions = 20;
+        xgap_values    = 20;
+        xgap_samples   = -50;
+    }
+    d3.select(".function_name_tt")
         .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top+ygap1)+"px")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap_functions)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top+ygap_functions)+"px")
         .text(d3.select(this.parentNode).data()[0].data.name)
     ;
     
     d3.select(".value_tt")
         .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top+ygap2)+"px")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap_values)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top+ygap_values)+"px")
         .text(d3.select(this).data())
     ;
     
-    /*d3.select(".sample_name_tt")
+    d3.select(".sample_name_tt")
         .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left-20)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top-40)+"px")
-    ;*/
-    //d3.select(".sample_name_tt_text").text(d3.select(".x-node"+i).text());
-    }
+        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap_samples)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top+ygap_samples)+"px")
+        .text(d3.select(".x-node"+i).text())
+    ;
+    
+    
 }
 function onmouseout_heatmap_squares(d,i){
     //switch_opacity(d3.select(this),1);
