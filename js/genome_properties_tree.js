@@ -1045,30 +1045,14 @@ function updateGraph (){
                                 .style("visibility","visible")
                                 .style("left",(d3.select(this).node().getBoundingClientRect().left+10)+"px")
                                 .style("top",(d3.select(this).node().getBoundingClientRect().top)+"px")
-                                /*.on("mouseout", function () {
-                                    console.log("I entered the mouseout of the download tool tip");
-                                    d3.select(".download_protein_tt").style("visibility","hidden");
-                                })*/
 
                             ;
                         }else{
                             tooltip.style("visibility","hidden");
                         }
-                        
 
-                        
-                        
-                        
-                        //set position
 
                       })
-                      /*.on("mouseout", function () {
-                        //d3.select(".download_protein_tt").style("visibility","hidden");
-                        d3.select(this)
-                      //          .text(function(d) { return '\uf019' ;})
-                                .style("cursor","auto")
-                        ;
-                      })*/
                     .append("image")
                     .attr("xlink:href","./assets/firefox_download.png")
                     .attr("width", 15)
@@ -1111,21 +1095,24 @@ function update_genome_properties_info(genome_property_ids)
         let current_id = genome_property_ids[id_index];
 
         localforage.getItem(current_id).then(function (local_genome_properties_data) {
+            /*console.log("current_id");
+            console.log(current_id);
+            console.log("local_genome_properties");
+            console.log(local_genome_properties_data);*/
             if (local_genome_properties_data === null)
             {
                 let data_url = back_end_url + 'genome_properties/' + current_id;
-                jQuery.getJSON(data_url, function (remote_genome_properties_data) {
-                    //console.log("data_url");
-                    //console.log(data_url);
-                    //console.log("remote_genome_properties_data");
-                    //console.log(remote_genome_properties_data);
-                    
+                //if I am remote ask for the things, if not then no...
+                if(loaded_micromeda_file){
+                    jQuery.getJSON(data_url, function (remote_genome_properties_data) {
                     localforage.setItem(current_id, remote_genome_properties_data).then(function () {
                         
                     }).catch(function (err) {
                         console.log(err);
                     });
-                });
+                    });
+                }
+                
             }
         }).catch(function (err) {
             console.log(err);

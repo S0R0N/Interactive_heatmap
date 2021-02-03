@@ -290,12 +290,12 @@ function draw_content_container(general_parameters){
     let sidebar_buttons_form_group = sidebar_form_group.append("div")//side bar buttion
         .attr("class","form-group text-center")
     ;
-    sidebar_buttons_form_group.append("button")
+    /*sidebar_buttons_form_group.append("button")
         .attr("id","update")
         .attr("type","button")
         .attr("class","btn btn btn-outline-primary btn-sm ub")   
         .text("Update")
-    ;
+    ;*/
     sidebar_buttons_form_group.append("button")
         .attr("type","button")
         .attr("class","btn btn-outline-secondary btn-sm rb")
@@ -594,20 +594,10 @@ function draw_heatmap(general_parameters,sample_names){
     // GxNodes contains the sample names
     
     let GxNodes = gZoom.append('g')//you can intercept here for a rectangle to generate the blur
-        /*.append("rect")
-            .attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
-            .style("fill","white")
-            .style("opacity",0.7)
-        .append("g")*/
         .attr('class', 'xn')
-        //.attr("height",heatmap_parameters.sample_name_height)
-        //.attr("width",heatmap_width)
-        //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"] + heatmap_parameters["link_margin"]) + ',' + (0) + ')')
         .attr("data-x_position",heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin)
         .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
         .style("display","block")
-        /*.style("fill","white")
-        .style("opacity",0.7)*/
         .style("position","relative")
         .style("z-index","1001")
     ;
@@ -793,6 +783,7 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_yes")
                 .attr("data-color",this.value)
             ;
+            initHeatmapData();
         })
     ;
     tt1_cy.append("label")
@@ -834,6 +825,7 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_partial")
                 .attr("data-color",this.value)
             ;
+            initHeatmapData();
         })
         ;
     tt1_cp.append("label")
@@ -875,6 +867,7 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_no")
                 .attr("data-color",this.value)
             ;
+            initHeatmapData();
         })
     ;
     tt1_cn.append("label")
@@ -936,6 +929,7 @@ function setup_object_actions(){
             }
         )
     ;
+    //RESET BUTTON
     d3.select(".rb")
         .on("click",function(){
                 selected_data.descendants().slice(1).forEach(collapse);//the collapse gunction was defined in the genome_properties_tree_fused.js file
@@ -943,6 +937,7 @@ function setup_object_actions(){
             }
         )
     ;
+    //EXPAND ALL BUTTON
     d3.select(".eab")
         .on("click",function(){
                 selected_data.descendants().slice(1).forEach(expand);//the expand gunction was defined in the genome_properties_tree_fused.js file
@@ -950,10 +945,9 @@ function setup_object_actions(){
             }
         )
     ;
+    //FILTER DROP BOX
     d3.select(".fms").on("change",function(){
         d3.select(".fms").attr("data-filter",this.value);
-
-
         if(d3.select(".fms").attr("data-filter")==="all"){
             d3.select(".fry").attr("disabled","true");
             d3.select(".frp").attr("disabled","true");
@@ -965,22 +959,45 @@ function setup_object_actions(){
             d3.select(".frn").attr("disabled",null);
             d3.select(".frs").attr("disabled",null);
         }
-
+        //call the data changing function
+        initHeatmapData();
     });
+    //CHECKBOXES
     d3.select(".fry").on("change",function(){
         d3.select(this).property("checked");
         if(d3.select(".frs").property("checked")){
             d3.select(".frs").property("checked",false);
+        }
+        //call the data changing function
+        let fcheck = [d3.select(".fry").property("checked"),d3.select(".frp").property("checked"),d3.select(".frn").property("checked"),d3.select(".frs").property("checked")];
+        if(fcheck.some(d => d===true)){
+            initHeatmapData();
+        }else{
+            alert("Please choose at least one value from YES, NO, PARTIAL or Unique");
         }
     });
     d3.select(".frp").on("change",function(){
         if(d3.select(".frs").property("checked")){
             d3.select(".frs").property("checked",false);
         }
+        //call the data changing function
+        let fcheck = [d3.select(".fry").property("checked"),d3.select(".frp").property("checked"),d3.select(".frn").property("checked"),d3.select(".frs").property("checked")];
+        if(fcheck.some(d => d===true)){
+            initHeatmapData();
+        }else{
+            alert("Please choose at least one value from YES, NO, PARTIAL or Unique");
+        }
     });
     d3.select(".frn").on("change",function(){
         if(d3.select(".frs").property("checked")){
             d3.select(".frs").property("checked",false);
+        }
+        //call the data changing function
+        let fcheck = [d3.select(".fry").property("checked"),d3.select(".frp").property("checked"),d3.select(".frn").property("checked"),d3.select(".frs").property("checked")];
+        if(fcheck.some(d => d===true)){
+            initHeatmapData();
+        }else{
+            alert("Please choose at least one value from YES, NO, PARTIAL or Unique");
         }
     });
     d3.select(".frs").on("change",function(){
@@ -988,6 +1005,13 @@ function setup_object_actions(){
             d3.select(".frn").property("checked",false);
             d3.select(".frp").property("checked",false);
             d3.select(".fry").property("checked",false);
+        }
+        //call the data changing function
+        let fcheck = [d3.select(".fry").property("checked"),d3.select(".frp").property("checked"),d3.select(".frn").property("checked"),d3.select(".frs").property("checked")];
+        if(fcheck.some(d => d===true)){
+            initHeatmapData();
+        }else{
+            alert("Please choose at least one value from YES, NO, PARTIAL or Unique");
         }
     });
 }
