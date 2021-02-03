@@ -402,6 +402,8 @@ function draw_heatmap(general_parameters,sample_names){
         .style("flex-shrink","1")
         .style("flex-basis","auto")
         .style("align-self","flex-start")
+        .style("position","relative")
+        .style("z-index","1003")
         .style("width","100%")
         .style("box-shadow","0 0 5px 3px rgba(0,0,0,0.25) inset")
         .style("overflow-y","scroll")
@@ -687,12 +689,14 @@ function draw_tool_tips(general_content_parameters){
         .attr("class","function_name_tt")
         .style("left","0px")
         .style("top","0px")
+        .style("height","30px")
         .style("opacity",0.7)
         .style("visibility","hidden")
         .style("background-color","black")
         .style("color","#fff")
         .style("text-align","center")
-        .style("padding","5px")
+        .style("vertical-align","middle")
+        .style("padding","2px")
         .style("border-radius","6px")
         .style("position","fixed")
         .style("z-index","101")
@@ -721,13 +725,15 @@ function draw_tool_tips(general_content_parameters){
         .append("span")
         .attr("class","value_tt")
         .style("left","0px")
-        .style("opacity",0.7)
         .style("top","0px")
+        .style("height","30px")
+        .style("opacity",0.7)
         .style("visibility","hidden")
         .style("background-color","black")
         .style("color","#fff")
         .style("text-align","center")
-        .style("padding","5px")
+        .style("vertical-align","middle")
+        .style("padding","2px")
         .style("border-radius","6px")
         .style("position","fixed")
         .style("z-index","101")
@@ -997,8 +1003,8 @@ function draw_sample_names(sample_names,general_parameters){
     console.log("I am in drawing the sample names");
     
     let samples                      = sample_names;
-    let general_content_parameters   = general_parameters["general_content"];
-    let heatmap_parameters           = general_content_parameters["heatmap"];
+    let general_content_parameters   = general_parameters.general_content;
+    let heatmap_parameters           = general_content_parameters.heatmap;
     //let margin_parameters            = general_parameters["margins"];
     let heatmap_width                = calculate_heatmap_width(heatmap_parameters,sample_names);
     let nodeSpaceX                   = heatmap_parameters.heatmap_sample_square_size;
@@ -1029,12 +1035,7 @@ function draw_sample_names(sample_names,general_parameters){
         function(enter){
             let xNodeEnter = enter
                     .append("g")
-                    //.attr('class',"x-node")
-                    //.attr('class',(function (d,i) {return "heatmap_col"+i ;})+" x-node")
                     .attr('class',(function (d,i) {return "x-node heatmap_col heatmap_col"+i ;}))
-                    //.style("position","relative")
-                    //.style("z-index","1002")
-                    //.attr('class',)
                 ;
                 xNodeEnter.append("text")
                     .attr('class',function (d,i) {return "x-node x-node"+i ;})//"x-node"+i+
@@ -1061,18 +1062,6 @@ function draw_sample_names(sample_names,general_parameters){
             return(xNodeExit);
         }
     );
-    /*GxNodes
-        .append("rect")
-        //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
-        .style("position","relative")
-        .style("z-index","1000")
-        .style("display","block")
-        .style("width","250px")//heatmap widh
-        .style("height",heatmap_parameters.sample_name_height+"px")//sample height
-        .attr("transform", "translate(0,8)")
-        .style("fill","white")
-        .style("opacity",0.7)
-    ;*/
 }
 
 

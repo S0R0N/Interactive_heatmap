@@ -659,13 +659,30 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
     d3.selectAll(".x-node"+i).attr("font-size", 18);
     
     console.log("parent data");
-    console.log(d3.select(this.parentNode).data()[0]);
+    console.log(d3.select(this).node().getBoundingClientRect().top);
+    console.log(d3.select(".mct").node().getBoundingClientRect().height);
+    console.log(parseInt(d3.select(".value_tt").style("height")));
     //Make the tool tips visble and load the texts
     // Make the tool tips visible
+    // Are the tool tips close to the bottom border?
+    const ygap1 =20;
+    const ygap2 =60;
+    const xgap  =20;
+    const tt_bottom_position           = d3.select(".mct").node().getBoundingClientRect().height - d3.select(this).node().getBoundingClientRect().top;
+    const tt_bottom_position_threshold = ygap2+parseInt(d3.select(".value_tt").style("height"));
+    if(tt_bottom_position<=tt_bottom_position_threshold){
+        console.log("it is minor than the threshold");
+        d3.select(".function_name_tt")
+        .style("visibility","visible")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top-ygap1)+"px")
+        .text(d3.select(this.parentNode).data()[0].data.name)
+    ;
+    
     d3.select(".value_tt")
         .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top+60)+"px")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top-ygap2)+"px")
         .text(d3.select(this).data())
     ;
     
@@ -675,16 +692,29 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
         .style("top",(d3.select(this).node().getBoundingClientRect().top-40)+"px")
     ;*/
     //d3.select(".sample_name_tt_text").text(d3.select(".x-node"+i).text());
-    
-    d3.select(".function_name_tt")
+    }else{
+        console.log("it is bigger than the threshold");
+        d3.select(".function_name_tt")
         .style("visibility","visible")
-        .style("left",(d3.select(this).node().getBoundingClientRect().left)+"px")
-        .style("top",(d3.select(this).node().getBoundingClientRect().top+20)+"px")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top+ygap1)+"px")
         .text(d3.select(this.parentNode).data()[0].data.name)
     ;
-    // Set positions for each tool tip
-    //  The position will depend on the mouse and the limits of the heatmap
     
+    d3.select(".value_tt")
+        .style("visibility","visible")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left+xgap)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top+ygap2)+"px")
+        .text(d3.select(this).data())
+    ;
+    
+    /*d3.select(".sample_name_tt")
+        .style("visibility","visible")
+        .style("left",(d3.select(this).node().getBoundingClientRect().left-20)+"px")
+        .style("top",(d3.select(this).node().getBoundingClientRect().top-40)+"px")
+    ;*/
+    //d3.select(".sample_name_tt_text").text(d3.select(".x-node"+i).text());
+    }
 }
 function onmouseout_heatmap_squares(d,i){
     //switch_opacity(d3.select(this),1);
