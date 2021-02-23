@@ -371,6 +371,13 @@ function calculate_heatmap_width(heatmap_parameters, sample_names){
     let   heatmap_width        = sample_names.length*heatmap_parameters.heatmap_sample_square_size;//depends now on the total number of samples.
     return(heatmap_width);
 }
+
+function BiggerElements(val){
+    return function(evalue, index, array){
+        return (evalue >= val);
+    };
+}
+
 /**
  * Draws the heatmap_canvas
  *
@@ -411,6 +418,48 @@ function draw_heatmap(general_parameters,sample_names){
         .on("scroll",function(){
             //d3.select(".xn").attr('transform', 'translate(' + (parseInt(d3.select(".heatmap").attr("data-Y_link_lenght")) + parseInt(d3.select(".heatmap").attr("data-link_margin"))) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
             d3.select(".xn").attr('transform', 'translate(' + (parseInt(d3.select(".xn").attr("data-x_position"))) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
+            // follow up scrolltop
+            //console.log("scroll_top");
+            //console.log(d3.select(".mct").property("scrollTop"));
+            //Getting the reference of the last drawn page
+            //Getting where I am 
+            const minZoom                           = 0.2;
+            const maxZoom                           = 1.05;
+            const zScale                            = d3.scaleLinear()
+                                                        .domain([0,100])
+                                                        .range([minZoom,maxZoom])
+                                                        ;
+            const scale                             = zScale(d3.select(".zcc").property("value"));
+            const svg_height_min                    = Math.round(parseInt(d3.select(".div_svg").attr("height"))*(1/scale)*minZoom);
+            const mct_height                        = d3.select(".mct").node().getBoundingClientRect().height;
+            const page_number                       = Math.ceil(svg_height_min/mct_height);
+            const current_mct_scroll_top            = d3.select(".mct").property("scrollTop");
+            let   scroll_top_current_page           = 0;
+            let   i                                 = 0;
+            let   visible_node_max_threshold_vector = [];
+            while(i < page_number){
+                if(i+1===page_number){
+                    //fill the last element with the maximum size possible 
+                    visible_node_max_threshold_vector.push(svg_height_min*(1/minZoom)*(scale));
+                }else{
+                    visible_node_max_threshold_vector.push(Math.floor((i+1)*(1/minZoom)*mct_height*(scale)));
+                }
+                i++;
+              }
+            scroll_top_current_page = visible_node_max_threshold_vector.findIndex(BiggerElements(current_mct_scroll_top));
+            //console.log("scroll_top_current_page");
+            //console.log(scroll_top_current_page);
+            //console.log(parseInt(d3.select(".mct").attr("data-scroll_top_current_page")));
+            if(scroll_top_current_page === parseInt(d3.select(".mct").attr("data-scroll_top_current_page"))){
+                //same page do nothing
+            }else{
+                //send redraw order.
+                updateGraph();
+            }
+            //save a reference of the last page you draw on a global object, maybe mct
+            //here identify where you are at, using the scroll top page and the max vector 
+            //trigger a redraw event if the page changes in comparison to the last drawn. 
+            
         })
     ;
     //##########################################################################
@@ -585,7 +634,6 @@ function draw_heatmap(general_parameters,sample_names){
     // GyNodes contains the function labels
     let GyNodes = heatmap.append('g')
         .attr('class', 'yn')
-        
         //.attr('transform','translate(' + (heatmap_parameters["Y_link_lenght"]+ heatmap_width + heatmap_parameters["link_margin"] + 10) + ',' + (1e-6) + ')')
         .attr('transform','translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')
         //.attr('transform','translate(' + (heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')

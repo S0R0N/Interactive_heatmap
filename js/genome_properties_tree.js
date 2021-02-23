@@ -453,7 +453,7 @@ function initHeatmapData (){
             o="";
             tofind = evt.params.data.id;
             selected_data.descendants().forEach(getFilteredData);
-            updateGraph();
+            
 
             let tar = d3.selectAll("."+o.idx)
                 .select(".y-node")
@@ -462,10 +462,11 @@ function initHeatmapData (){
             d3.transition()
                 .duration(1000)
                 .tween("scroll", scrollTween(o.nodeY*(d3.select(".chart").attr("scale"))))
-                .transition()
+                /*.transition()
                     .duration(5000)
-                    .tween("selected_text", borderTween("black",tar))
+                    .tween("selected_text", borderTween("black",tar))*/
             ;
+            updateGraph();
         }
     );
     
@@ -530,14 +531,32 @@ function initHeatmapData (){
             ;
 
             //SCALING THE SVG, SO EVEN IF I ZOOM, I CAN STILL EXPLORE THE WHOLE OBJECT
+            //updateGraph();
             d3.select(".div_svg").transition()
                 .duration(1000)
                 .attr("width", (window_width + margin_parameters.left + margin_parameters.right)*d3.event.transform.k)
                 .attr("height", (heatmap_parameters.nodeSpaceY*(selected_data.descendants().length)+heatmap_parameters.sample_name_height+20)*d3.event.transform.k)
                 .attr("viewBox", [0,0, (window_width + margin_parameters.left + margin_parameters.right)*d3.event.transform.k, (heatmap_parameters.nodeSpaceY*(selected_data.descendants().length)+heatmap_parameters.sample_name_height+20)*d3.event.transform.k])
             ;
+            setTimeout(() => {  updateGraph(); }, 1100);
+            //
             //SCALING THE Y POSITION OF THE SCROLL BAR TO KEEP THE SCREEN ORIGINAL COORDINATE. BEFORE ZOOMING. 
-            d3.select(".mct").node().scrollTo(0, scrollRatio*d3.select(".mct").property("scrollHeight"));
+            //d3.select(".mct").node().scrollTo(0, scrollRatio*d3.select(".mct").property("scrollHeight"));
+            /*console.log("scroll top sin escala invertida");
+            console.log((d3.select(".mct").node().scrollTop));
+            console.log("scroll top con escala invertida");
+            console.log((d3.select(".mct").node().scrollTop)*(1/d3.event.transform.k));
+            console.log("scroll top con escala");
+            console.log((d3.select(".mct").node().scrollTop)*(d3.event.transform.k));
+            console.log("zoom scroll ratio");
+            console.log(scrollRatio);
+            console.log("santi del pasado solucion");
+            console.log(scrollRatio*d3.select(".mct").property("scrollHeight"));
+            console.log("santi del pasado solucion con escala");
+            console.log(scrollRatio*d3.select(".mct").property("scrollHeight")*(d3.event.transform.k));*/
+            //d3.select(".mct").node().scrollTo(0, parseInt((d3.select(".mct").node().scrollTop)*(d3.event.transform.k)));
+            //d3.select(".mct").node().scrollTo(0, parseInt(scrollRatio*d3.select(".mct").property("scrollHeight")*(d3.event.transform.k)));
+            
 
         })
         .scaleExtent([0.2, 1.05])
@@ -657,11 +676,6 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
     //Columns on
     d3.selectAll(".heatmap_col"+i).style("opacity",1);//cols
     d3.selectAll(".x-node"+i).attr("font-size", 18);
-    
-    /*console.log("parent data");
-    console.log(d3.select(this).node().getBoundingClientRect().top);
-    console.log(d3.select(".mct").node().getBoundingClientRect().height);
-    console.log(parseInt(d3.select(".value_tt").style("height")));*/
     //Make the tool tips visble and load the texts
     // Make the tool tips visible
     // Are the tool tips close to the bottom border?
@@ -678,7 +692,7 @@ function onmouseover_heatmap_squares(d,i){//Changing the cursor appearance
     //need the top position of the mouse
     // check difference and set value for the gaps. 
     if(tt_bottom_position<=tt_bottom_position_threshold){
-        console.log("it is minor than the threshold");
+        //console.log("it is minor than the threshold");
         ygap_functions = -20;
         ygap_values    = -60;
         ygap_samples   = -40;
@@ -728,6 +742,20 @@ function onmouseout_heatmap_squares(d,i){
     d3.select(".sample_name_tt").style("visibility","hidden");
     d3.select(".function_name_tt").style("visibility","hidden");
 }
+//array function from https://www.w3resource.com/javascript-exercises/javascript-function-exercise-19.php
+function BiggerElements(val){
+    return function(evalue, index, array){
+        return (evalue >= val);
+    };
+}
+
+function InbetweenElements(x,y){
+    return function(evalue, index, array){
+        //console.log("evalue");
+        //console.log(evalue);
+        return (parseInt(evalue.nodeY) >= x && parseInt(evalue.nodeY) <=y);
+    };
+}
 //@param {object} selected_data the JSON tree filtered data
 //@return {void}  draws the interactive heatmap elements
 function updateGraph (){
@@ -742,29 +770,116 @@ function updateGraph (){
         .range([d3.select(".rect0").style("fill"),d3.select(".rect1").style("fill"),d3.select(".rect2").style("fill")]);//takes them from the legend objects
     ;
     //NODE manipulation
-    let nodes                        = selected_data.descendants().slice(1);//the slice is used to avoid showing the first node
-    const downloadable_steps         = [];
+    let pre_filter_nodes             = selected_data.descendants().slice(1);//the slice is used to avoid showing the first node
+    const scale                      = zScale(d3.select(".zcc").property("value"));
+    d3.select(".div_svg")
+        .attr("width", (window.innerWidth)*scale)
+        .attr("height", (parseInt(d3.select(".div_svg").attr("data-nodeSpaceY"))*pre_filter_nodes.length + parseInt(d3.select(".div_svg").attr("data-sample_name_height")) + 20)*scale)
+        .attr("viewBox", [0, 0, (window.innerWidth)*scale, parseInt(d3.select(".div_svg").attr("data-nodeSpaceY")*pre_filter_nodes.length + parseInt(d3.select(".div_svg").attr("data-sample_name_height")) + 20)*scale])
+    ;
+    const downloadable_steps              = [];
+    const svg_height_min                  = (parseInt(d3.select(".div_svg").attr("data-nodeSpaceY"))*pre_filter_nodes.length + parseInt(d3.select(".div_svg").attr("data-sample_name_height")) + 20)*minZoom;
+    const set_of_screens_in_onepage       = 3;
+    const mct_height                      = d3.select(".mct").node().getBoundingClientRect().height;
+    const page_number                     = Math.ceil(svg_height_min/mct_height);
+    //console.log("comparing the sizes of the svg");
+    //console.log(Math.round(parseInt(d3.select(".div_svg").attr("height"))*(1/scale)*minZoom));
+    //console.log(svg_height_min);
+
+    const current_mct_scroll_top          = d3.select(".mct").property("scrollTop");
+    let   i                               = 0;
+    let visible_node_min_threshold_vector = [];
+    let visible_node_max_threshold_vector = [];
+    while(i < page_number){
+      visible_node_min_threshold_vector.push(Math.floor(i*(1/minZoom)*mct_height*(scale)));
+      if(i+1===page_number){
+          //fill the last element with the maximum size possible 
+          visible_node_max_threshold_vector.push(svg_height_min*(1/minZoom)*(scale));
+      }else{
+          visible_node_max_threshold_vector.push(Math.floor((i+1)*(1/minZoom)*mct_height*(scale)));
+      }
+      i++;
+    }
     
-    nodes.sort(function(a, b){return a.or - b.or;});
-    update_genome_properties_info(nodes.map(d => d.data.property_id));
-    const scale   = zScale(d3.select(".zcc").property("value"));
+    let visible_node_min_threshold = 0;
+    let visible_node_max_threshold = 0;
+    let scroll_top_current_page    = 0;
     
+    pre_filter_nodes.sort(function(a, b){return a.or - b.or;});
+    update_genome_properties_info(pre_filter_nodes.map(d => d.data.property_id));
     counter       = 0;
-    nodes.forEach(function(d){
+    pre_filter_nodes.forEach(function(d){
         d.id    = counter;
         d.nodeY = ((d3.select(".div_svg").attr("data-nodeSpaceY"))*(d.id+1)) - (d3.select(".div_svg").attr("data-nodeSpaceY")/2);
         counter++;
         return(d.id);
     });
     counter      = 0;
+    let nodes       = [];
+    // if to decide what nodes to print
+    if(page_number<=set_of_screens_in_onepage){
+        //print all
+        console.log("one set of 3 screens!");
+        //one division
+        //set thresholds
+        //minthreshold to 0 
+        scroll_top_current_page    = visible_node_max_threshold_vector.findIndex(BiggerElements(current_mct_scroll_top));
+        visible_node_min_threshold = visible_node_min_threshold_vector[0];
+        //max threshold to maximum svg size with scale
+        visible_node_max_threshold = visible_node_max_threshold_vector[page_number-1];
+        //nodes = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold,visible_node_max_threshold));
+        nodes                      = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold*(1/scale),visible_node_max_threshold*(1/scale)));
+        
+        
+    }else{
+        //define pages and their thresholds 
+        //gets the page where my scroll top is at 
+        scroll_top_current_page = visible_node_max_threshold_vector.findIndex(BiggerElements(current_mct_scroll_top));
+        // define the set of three pages to show 
+        // define the threshold of the pages to show
+        switch(scroll_top_current_page){
+            case 0:
+                //first page so, show the 0, 1 and 2 pages
+                //console.log("I am scrolling in the first page!");
+                //let nodes       = selected_data.descendants().slice(1);//the slice is used to avoid showing the first node
+                visible_node_min_threshold = visible_node_min_threshold_vector[(scroll_top_current_page)];
+                visible_node_max_threshold = visible_node_max_threshold_vector[(scroll_top_current_page+2)];
+                //nodes = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold,visible_node_max_threshold));
+                nodes = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold*(1/scale),visible_node_max_threshold*(1/scale)));
+                break;
+            case page_number:
+                //la ultima so, show last, last -1 and last -2
+                /*console.log("I am scrolling in the last page!");
+                visible_node_min_threshold = visible_node_min_threshold_vector[(scroll_top_current_page-2)];
+                visible_node_max_threshold = visible_node_max_threshold_vector[(scroll_top_current_page)];
+                console.log("visible_node_min_threshold");
+                console.log(visible_node_min_threshold);
+                console.log("visible_node_max_threshold");
+                console.log(visible_node_max_threshold);
+                console.log("visible_node_min_threshold without scale");
+                console.log(visible_node_min_threshold*(1/scale));
+                console.log("visible_node_max_threshold without scale");
+                console.log(visible_node_max_threshold*(1/scale));*/
+                //nodes = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold,visible_node_max_threshold));
+                nodes = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold*(1/scale),visible_node_max_threshold*(1/scale)));
+                //let nodes       = selected_data.descendants().slice(1);//the slice is used to avoid showing the first node
+                break;
+            default:
+                // the other cases, so center in the scroll top current page +1 and -1
+                //console.log("I am scrolling a page that is not the first nor the last");
+                visible_node_min_threshold = visible_node_min_threshold_vector[(scroll_top_current_page-1)];
+                visible_node_max_threshold = visible_node_max_threshold_vector[(scroll_top_current_page+1)];
+                //nodes = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold,visible_node_max_threshold));
+                nodes = pre_filter_nodes.filter(InbetweenElements(visible_node_min_threshold*(1/scale),visible_node_max_threshold*(1/scale)));
+                //let nodes       = selected_data.descendants().slice(1);//the slice is used to avoid showing the first node
+                break;
+        }
+    }
+    //save the page in a global object, mct. 
+    d3.select(".mct").attr("data-scroll_top_current_page",scroll_top_current_page);
+    //console.log("the global mct scroll top");
+    //console.log(d3.select(".mct").attr("data-scroll_top_current_page"));
     //End NODE manipulation
-    
-    d3.select(".div_svg")
-        .attr("width", (window.innerWidth)*scale)
-        .attr("height", (parseInt(d3.select(".div_svg").attr("data-nodeSpaceY"))*nodes.length + parseInt(d3.select(".div_svg").attr("data-sample_name_height")) + 20)*scale)
-        .attr("viewBox", [0, 0, (window.innerWidth)*scale, parseInt(d3.select(".div_svg").attr("data-nodeSpaceY")*nodes.length + parseInt(d3.select(".div_svg").attr("data-sample_name_height")) + 20)*scale])
-    ;
-    
     //##################################################################
     //##                     DRAWING THE NETWORK                      ##
     //##################################################################
@@ -894,7 +1009,7 @@ function updateGraph (){
                         let rowEnterRect = enter.append('rect')
                             .attr("class",function (d,i) {return "heatmap_square heatmap_col heatmap_col"+i+" "+d3.select(this.parentNode).data()[0].idx ;})//assigning to the rects their column row indexes
                             .style('fill', function (d) {return heatColor(d);})
-                            .style('opacity', 0.7)
+                            .style('opacity', 1)
                             .attr('x', function(d, i) {return bandX(i);})
                             .style('stroke', '#000')
                             .style('stroke-width', 1)
@@ -925,7 +1040,7 @@ function updateGraph (){
                     .style('fill', function (d) {
                             return heatColor(d);
                         })
-                    .style('opacity', 0.7)
+                    .style('opacity', 1)
                     .attr('x', function(d, i) {return bandX(i);})
                     .style('stroke', '#000')
                     .style('stroke-width', 1)
@@ -940,7 +1055,7 @@ function updateGraph (){
         }
     );
     // ADD for each node an icon that will activate the extended metadata. 
-    let m_icon = d3.select(".metadata_icon_holder").selectAll('g.metadata_icon')
+    /*let m_icon = d3.select(".metadata_icon_holder").selectAll('g.metadata_icon')
         .data(nodes,function(d) {
             return d.idx;
         });
@@ -1007,7 +1122,7 @@ function updateGraph (){
             let iconExit = exit.remove();
             return(iconExit);
         }
-    );
+    );*/
 
     
     if (!loaded_micromeda_file){
