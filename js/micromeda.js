@@ -19,6 +19,7 @@ let loaded_micromeda_file = false; //global container for the diagram config fil
  */
 
 $(document).ready(function () {
+	console.log("document ready start");
     
     $.getJSON('./configs/application_configuration.json', function (config) {
         back_end_url = config['back_end_url'];
