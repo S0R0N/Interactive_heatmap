@@ -25,6 +25,8 @@ $(document).ready(function () {
 
         localforage.config({name: 'micromeda', storeName: 'micromeda_data'});
         localforage.getItem('micromeda-result-key').then(function (result_key) {
+			console.log("result_key");
+			console.log(result_key);
             if (result_key === null)
             {
                 // here the application speaks to the back-end (server), but it answers that there is no tree. So, I will pass it a Json tree inside the data folder. 
