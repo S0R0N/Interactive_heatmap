@@ -623,7 +623,7 @@ function draw_heatmap(general_parameters,sample_names){
     ;
 
     // CREATING THE HEATMAP DRAWING SPACE 
-    const table_x_position         = heatmap_parameters.heatmap_controls_left_margin + heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_left_margin;
+    const table_x_position         = heatmap_parameters.heatmap_controls_left_margin;
 	const download_icon_x_position = table_x_position+ heatmap_width + heatmap_parameters.heatmap_controls_left_margin;
     const GxNodes_x_position       = table_x_position;
     const GyNodes_x_position       = download_icon_x_position+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_left_margin;
