@@ -623,10 +623,10 @@ function draw_heatmap(general_parameters,sample_names){
     ;
 
     // CREATING THE HEATMAP DRAWING SPACE 
-    const table_x_position         = heatmap_parameters.heatmap_controls_margin;
-	const download_icon_x_position = table_x_position+heatmap_parameters.heatmap_controls_left_margin+heatmap_width;
+    const table_x_position         = heatmap_parameters.heatmap_controls_left_margin + heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_left_margin;
+	const download_icon_x_position = table_x_position+ heatmap_width + heatmap_parameters.heatmap_controls_left_margin;
     const GxNodes_x_position       = table_x_position;
-    const GyNodes_x_position       = download_icon_x_position+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin;
+    const GyNodes_x_position       = download_icon_x_position+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_left_margin;
     let heatmap = gZoom.append('g').attr('class', 'heatmap')
         .attr('transform', 'translate('+ (0) + ',' + (heatmap_parameters.sample_name_height+20) + ')')
         .attr("data-Y_link_lenght",heatmap_parameters.heatmap_sample_square_size)
