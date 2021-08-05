@@ -418,8 +418,9 @@ function draw_heatmap(general_parameters,sample_names){
         .on("scroll",function(){
             //d3.select(".xn").attr('transform', 'translate(' + (parseInt(d3.select(".heatmap").attr("data-Y_link_lenght")) + parseInt(d3.select(".heatmap").attr("data-link_margin"))) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
             d3.select(".xn").attr('transform', 'translate(' + (parseInt(d3.select(".xn").attr("data-x_position"))) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
+            d3.select(".yn").attr('transform', 'translate(' + (parseInt(d3.select(".yn").attr("data-x_position"))) + ',' + (0) + ')');
             // follow up scrolltop
-            //console.log("scroll_top");
+            console.log("scroll_top");
             //console.log(d3.select(".mct").property("scrollTop"));
             //Getting the reference of the last drawn page
             //Getting where I am 
@@ -622,8 +623,10 @@ function draw_heatmap(general_parameters,sample_names){
     ;
 
     // CREATING THE HEATMAP DRAWING SPACE 
-    
-    
+    const download_icon_x_position = heatmap_parameters.heatmap_controls_left_margin;
+    const table_x_position         = download_icon_x_position + heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin;
+    const GxNodes_x_position       = table_x_position;
+    const GyNodes_x_position       = table_x_position+ heatmap_width + heatmap_parameters.heatmap_controls_margin + heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin;
     let heatmap = gZoom.append('g').attr('class', 'heatmap')
         .attr('transform', 'translate('+ (0) + ',' + (heatmap_parameters.sample_name_height+20) + ')')
         .attr("data-Y_link_lenght",heatmap_parameters.heatmap_sample_square_size)
@@ -631,45 +634,51 @@ function draw_heatmap(general_parameters,sample_names){
         .style("position","relative")
         .style("z-index",1000)
     ;
-    // GyNodes contains the function labels
-    let GyNodes = heatmap.append('g')
-        .attr('class', 'yn')
-        //.attr('transform','translate(' + (heatmap_parameters["Y_link_lenght"]+ heatmap_width + heatmap_parameters["link_margin"] + 10) + ',' + (1e-6) + ')')
-        .attr('transform','translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')
-        //.attr('transform','translate(' + (heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')
-        .attr("data-intro_animation_time",heatmap_parameters.intro_animation_time)
+    // table contains the heatmap squares
+    let table = heatmap.append('g')
+        .attr('class', 'table')
+        //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"] + heatmap_parameters["link_margin"]) + ',' + (0) + ')')
+        .attr("data-x_position",table_x_position)
+        .attr('transform', 'translate(' + (table_x_position) + ',' + (0) + ')')
+        .attr("data-heatmapWidth",heatmap_width)
+        .attr("data-sample_names_length",sample_names.length)
     ;
-    // GxNodes contains the sample names
     
+        // GxNodes contains the sample names
     let GxNodes = gZoom.append('g')//you can intercept here for a rectangle to generate the blur
         .attr('class', 'xn')
-        .attr("data-x_position",heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin)
-        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
+        .attr("data-x_position",GxNodes_x_position)
+        .attr('transform', 'translate(' + (GxNodes_x_position) + ',' + (0) + ')')
         .style("display","block")
         .style("position","relative")
         .style("z-index","1001")
     ;
     
-    // table contains the heatmap squares
-    let table = heatmap.append('g')
-        .attr('class', 'table')
-        //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"] + heatmap_parameters["link_margin"]) + ',' + (0) + ')')
-        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
-        .attr("data-heatmapWidth",heatmap_width)
-        .attr("data-sample_names_length",sample_names.length)
+    // GyNodes contains the function labels
+    let GyNodes = heatmap.append('g')
+        .attr('class', 'yn')
+        //.attr('transform','translate(' + (heatmap_parameters["Y_link_lenght"]+ heatmap_width + heatmap_parameters["link_margin"] + 10) + ',' + (1e-6) + ')')
+        .attr("data-x_position",GyNodes_x_position)
+        .attr('transform','translate(' + (GyNodes_x_position) + ',' + (1e-6) + ')')
+        //.attr('transform','translate(' + (heatmap_parameters.heatmap_controls_margin) + ',' + (1e-6) + ')')
+        .attr("data-intro_animation_time",heatmap_parameters.intro_animation_time)
     ;
+
+    
+    
     //first icon, the metadata icon
-    let metadata_icon_holder = heatmap.append('g')
+    /*let metadata_icon_holder = heatmap.append('g')
         .attr('class', 'metadata_icon_holder')
         //.attr("width",heatmap_parameters.heatmap_icon_container_width)
         //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"]/3) + ',' + (0) + ')')
         .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin ) + ',' + (0) + ')')
-    ;
+    ;*/
     //second icon the dowload protein icon
     let download_icon_holder = heatmap.append('g')
         .attr('class', 'download_icon_holder')
+        .attr("data-x_position",download_icon_x_position)
         //.attr('transform', 'translate(' + (heatmap_parameters["Y_link_lenght"]/3)*2 + ',' + (0) + ')')
-        .attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin ) + ',' + (0) + ')')
+        .attr('transform', 'translate(' + (download_icon_x_position) + ',' + (0) + ')')
     ;
     //third  icon the expand compress function
 }

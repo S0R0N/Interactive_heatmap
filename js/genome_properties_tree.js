@@ -578,7 +578,9 @@ function initHeatmapData (){
         .attr("scale",zScale(d3.select(".zcc").property("value")))
     ;
     //d3.select(".xn").attr('transform', 'translate(' + (heatmap_parameters.Y_link_lenght + heatmap_parameters.link_margin) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
-    d3.select(".xn").attr('transform', 'translate(' + (heatmap_parameters.heatmap_controls_left_margin+ heatmap_parameters.heatmap_icon_container_width + heatmap_parameters.heatmap_controls_margin+  heatmap_parameters.heatmap_function_label_width + heatmap_parameters.heatmap_controls_margin+ heatmap_parameters.heatmap_icon_container_width+heatmap_parameters.heatmap_controls_margin+heatmap_parameters.heatmap_icon_container_width+ heatmap_parameters.heatmap_controls_margin ) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
+    
+    d3.select(".xn").attr('transform', 'translate(' + (d3.select(".xn").attr('data-x_position')*1) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
+    
     d3.select(".zcc").on("input", function(d){
         zoomv.scaleTo(d3.select(".chart"),zScale(d3.select(".zcc").property("value")));
     });
@@ -643,6 +645,18 @@ function onmouseover_function_labels(d){//Changing the cursor appearance
     //switch everyone's opacity low, ligths out, with animation. 
     viz_ligths_on();
     viz_ligths_dim();
+    
+    let tooltip = d3.select(".toolt");
+    tooltip.attr("data-class",d3.select(this).attr("class"));
+
+    if(d.data.property_id){
+
+        generate_property_tooltip_html_content(tooltip, d);
+    }else{
+
+        generate_step_tooltip_html_content(tooltip, d);
+    }
+    
     // turn on the ligts for this row only
     //d3.select(this).attr("opacity",1);
     d3.selectAll("."+String(d.idx)).style("opacity",1);
@@ -883,6 +897,17 @@ function updateGraph (){
     //##################################################################
     //##                     DRAWING THE NETWORK                      ##
     //##################################################################
+    
+    let GyNodes = d3.select(".yn");
+    // For about this background square see bellow. 
+    
+    GyNodes
+        .append("rect")
+        .attr("class","yn_background")
+        .style("display","block")
+        .style("fill","white")
+        .style("opacity",0.7)
+    ;
     let yNode = d3.select(".yn").selectAll('g.y-node')
             .data(nodes,function(d) {
                 return d.idx;
@@ -905,11 +930,12 @@ function updateGraph (){
                         .style('fill', "white")
                         .attr("font-family", " Arial, sans-serif")
                         .attr("font-size", 12)
-                        //.attr("width", 240)
-                        .text(function(d) {
+                        //.attr("width", 240
+                        .text(d => d.data.name)
+                        /*.text(function(d) {
                                 return truncateString(d.data.name,30);
                             }
-                        )
+                        )*/
                         .style("font-weight", function(d) {
                             let fw = "normal";
                             if(d.height ===0){
@@ -948,10 +974,11 @@ function updateGraph (){
 
                             return (d.children ? "italic": "normal");
                         })
-                        .text(function(d) {
+                        /*.text(function(d) {
                                 return truncateString(d.data.name,30);
                             }
-                        )
+                        )*/
+                        .text(d => d.data.name)
                         .on('mouseover', onmouseover_function_labels)
                         .on('mouseout', onmouseout_function_labels)
                         .attr('transform', function(d) { return 'translate(' + d.yLinkScaledLenght + ',' + (d.nodeY+3) + ')'; })
@@ -973,6 +1000,30 @@ function updateGraph (){
                 return(yNodeExit);
             }
         );
+        //set the dimensions of the opaque square for the function names
+        // To avoid the function names disapear to the right when we have lots of samples, we can limit its translate of the yn
+        // to limit the translate of the yn we can use the heatmap size and the yn widht. 
+        // 
+        // if yn data-x_position - d3.select(".yn").node().getBBox().width*1 > d3.select(".div_svg").attr("width") 
+        // then set the yn data-x_position to d3.select(".div_svg").attr("width") - d3.select(".yn").node().getBBox().width*1
+        
+        d3.select(".yn_background")
+                .attr("width",d3.select(".yn").node().getBBox().width*1)
+                .attr("height",d3.select(".yn").node().getBBox().height*1)
+        ;
+        const yn_x_position      = d3.select(".yn").attr("data-position_x")*1;
+        const yn_total_width     = d3.select(".yn").node().getBBox().width*1;
+        const yn_container_width = d3.select(".div_svg").attr("width")*1
+        
+        if(yn_x_position - yn_total_width > yn_container_width){
+            console.log("I enter to correct yn's x position");
+            d3.select(".yn").attr("data-position_x",yn_x_position - yn_total_width);
+            d3.select(".yn").attr("transform","translate(" + (yn_x_position - yn_total_width) + "," + (0) + ")");
+        }else{
+            console.log("no need to correct yn's x position");
+        }
+        
+        
     //##################################################################
     //##                 END DRAWING THE NETWORK                      ##
     //##################################################################
@@ -980,6 +1031,17 @@ function updateGraph (){
     //##################################################################
     //##                     DRAWING THE BOXES                        ##
     //##################################################################
+    // we can use the width of yn as reference to locate the cells 
+    // set the new location of the heatmap table. 
+    /*console.log("yn widht");
+    console.log((d3.select(".yn").node().getBBox().width+3)*scale);
+    console.log("yn x pos");
+    console.log((d3.select(".yn").attr("data-x_position"))*scale);*/
+    //it would be yn widht plus all teh movement yn has...
+    
+    //d3.select(".table").attr('transform', 'translate(' + (d3.select(".yn").node().getBBox().width + d3.select(".yn").attr("data-x_position")*1 + 30) + ',' + (0) + ')');
+    //d3.select(".xn").attr('transform', 'translate(' + (d3.select(".yn").node().getBBox().width + d3.select(".yn").attr("data-x_position")*1 + 30) + ',' + (0) + ')');
+    //d3.select(".xn").attr("data-x_position",d3.select(".yn").node().getBBox().width + d3.select(".yn").attr("data-x_position")*1 + 30)
     let nCols = d3.select(".table").attr("data-sample_names_length");
     let bandX = d3.scaleBand()
         .domain(d3.range(nCols))
