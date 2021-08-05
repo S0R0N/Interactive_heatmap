@@ -19,12 +19,15 @@ let loaded_micromeda_file = false; //global container for the diagram config fil
  */
 
 $(document).ready(function () {
+	console.log("document ready start");
     
     $.getJSON('./configs/application_configuration.json', function (config) {
         back_end_url = config['back_end_url'];
 
         localforage.config({name: 'micromeda', storeName: 'micromeda_data'});
         localforage.getItem('micromeda-result-key').then(function (result_key) {
+			console.log("result_key");
+			console.log(result_key);
             if (result_key === null)
             {
                 // here the application speaks to the back-end (server), but it answers that there is no tree. So, I will pass it a Json tree inside the data folder. 
