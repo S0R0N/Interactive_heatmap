@@ -6,7 +6,8 @@
  */
 
 
-let back_end_url = "http://0.0.0.0:5000/";
+//let back_end_url = "http://0.0.0.0:5000/";
+let back_end_url = "";
 let raw_data;      //global container for the JSON data tree object
 let selected_data;      //global container for the JSON data tree object
 let diagram_all_parameters; //global container for the diagram config file
