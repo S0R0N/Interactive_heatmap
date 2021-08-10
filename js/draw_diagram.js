@@ -118,7 +118,7 @@ function draw_content_container(general_parameters){
         .attr("id","fs1")
         .attr("class","fms form-control")//filter menu select
         .attr("name","filter")
-        .attr("data-filter","path")
+        .attr("data-filter","all")
     ;
     sidebar_form_group_select.append("option")
         .attr("class","fmdo")//option
@@ -319,6 +319,23 @@ function draw_content_container(general_parameters){
         })
     ;
     sidebar_form_group.append("hr");
+    //Drawing Zoom controls
+    let sidebar_zoom_control = sidebar_form_group.append("div")//side bar buttion
+        .attr("class","form-group")
+    ;
+    sidebar_zoom_control.append("label")
+        .attr("for","zc")//filter menu select filter select
+        .text("Zoom control")
+    ;
+    sidebar_zoom_control.append("input")
+        .attr("class","form-control zcc")
+        .attr("id","zc")
+        .attr("type","range")
+        .attr("min",0)
+        .attr("max",100)
+        .attr("value",80)
+    ;
+    sidebar_form_group.append("hr");
     //Drawing the select2 Search selector
     let sidebar_select2_search = sidebar_form_group
         .append("select")//navigationbar division select
@@ -335,24 +352,6 @@ function draw_content_container(general_parameters){
         .attr("label","Property Names")
         .attr("class","ndfso_names")
     ;
-    sidebar_form_group.append("hr");
-    //Drawing Zoom controls
-    let sidebar_zoom_control = sidebar_form_group.append("div")//side bar buttion
-        .attr("class","form-group")
-    ;
-    sidebar_zoom_control.append("label")
-        .attr("for","zc")//filter menu select filter select
-        .text("Zoom control")
-    ;
-    sidebar_zoom_control.append("input")
-        .attr("class","form-control zcc")
-        .attr("id","zc")
-        .attr("type","range")
-        .attr("min",0)
-        .attr("max",100)
-        .attr("value",50)
-    ;
-    
 }
 /**
  * Calculates the heatmap width
@@ -420,12 +419,12 @@ function draw_heatmap(general_parameters,sample_names){
             d3.select(".xn").attr('transform', 'translate(' + (parseInt(d3.select(".xn").attr("data-x_position"))) + ',' + (d3.select(".mct").property("scrollTop")*(1/d3.select(".chart").attr("scale"))) + ')');
             d3.select(".yn").attr('transform', 'translate(' + (parseInt(d3.select(".yn").attr("data-x_position"))) + ',' + (0) + ')');
             // follow up scrolltop
-            console.log("scroll_top");
+            //console.log("scroll_top");
             //console.log(d3.select(".mct").property("scrollTop"));
             //Getting the reference of the last drawn page
             //Getting where I am 
-            const minZoom                           = 0.2;
-            const maxZoom                           = 1.05;
+            const minZoom                           = 0.5;
+            const maxZoom                           = 1.1;
             const zScale                            = d3.scaleLinear()
                                                         .domain([0,100])
                                                         .range([minZoom,maxZoom])
@@ -606,6 +605,15 @@ function draw_heatmap(general_parameters,sample_names){
     //##########################################################################
             // this object is the window to see the target of the zoom.
             // remember to scale this up
+			
+	
+    const minZoom                           = 0.5;
+    const maxZoom                           = 1.1;
+    const zScale                            = d3.scaleLinear()
+                                                        .domain([0,100])
+                                                        .range([minZoom,maxZoom])
+                                                        ;
+    const scale                             = zScale(d3.select(".zcc").property("value"));
             
     let svg = dv
         .append("svg")
@@ -616,8 +624,8 @@ function draw_heatmap(general_parameters,sample_names){
     ;
     let gZoom = svg.append("g")
         .attr("class","chart")
-        .attr("transform","scale(0.5)")
-        .attr("scale",0.5)
+        .attr("transform","scale("+scale+")")
+        .attr("scale",scale)
         .style("position","relative")
         .style("z-index","1001")
     ;

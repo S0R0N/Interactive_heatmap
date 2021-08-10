@@ -514,8 +514,8 @@ function initHeatmapData (){
     //**************************************************************
     const window_width  = window.innerWidth - margin_parameters.left - margin_parameters.right;
     const window_height = window.innerHeight - margin_parameters.top - margin_parameters.bottom;
-    const minZoom            = 0.2;
-    const maxZoom            = 1.05;
+    const minZoom            = 0.5;
+    const maxZoom            = 1.1;
     let zScale = d3.scaleLinear()
                 .domain([0,100])
                 .range([minZoom,maxZoom]);
@@ -559,7 +559,7 @@ function initHeatmapData (){
             
 
         })
-        .scaleExtent([0.2, 1.05])
+        .scaleExtent([minZoom, maxZoom])
     ;
 
     d3.select(".chart").call(zoomv)
@@ -570,7 +570,6 @@ function initHeatmapData (){
         .on("touchend.zoom", null)
     ;
     d3.select(".zcc").property("value",  50);
-
     d3.select(".chart").call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(zScale(d3.select(".zcc").property("value"))));
 
     d3.select(".chart")
@@ -644,7 +643,7 @@ function viz_ligths_on(){//it will loop by all the elements of the zoom chart an
 function onmouseover_function_labels(d){//Changing the cursor appearance 
     //switch everyone's opacity low, ligths out, with animation. 
     viz_ligths_on();
-    viz_ligths_dim();
+    //viz_ligths_dim();
     
     let tooltip = d3.select(".toolt");
     tooltip.attr("data-class",d3.select(this).attr("class"));
@@ -773,8 +772,8 @@ function InbetweenElements(x,y){
 //@param {object} selected_data the JSON tree filtered data
 //@return {void}  draws the interactive heatmap elements
 function updateGraph (){
-    const minZoom = 0.2;
-    const maxZoom = 1.05;
+    const minZoom = 0.5;
+    const maxZoom = 1.1;
     let zScale    = d3.scaleLinear()
         .domain([0,100])
         .range([minZoom,maxZoom])
