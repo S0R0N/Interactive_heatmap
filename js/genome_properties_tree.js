@@ -426,6 +426,11 @@ function initHeatmapData (){
             selected_data     = all_data;
             selected_data.descendants().slice(1).forEach(expand);
             place_holder_text = "Search all functions here";
+            d3.select(".fry").attr("disabled","true");
+            d3.select(".frp").attr("disabled","true");
+            d3.select(".frn").attr("disabled","true");
+            d3.select(".frs").attr("disabled","true");
+            //if here I have to deactivate the checkboxes
         break;
         case "path":
             selected_data     = pathway_data;
@@ -514,8 +519,6 @@ function initHeatmapData (){
     //**************************************************************
     const window_width  = window.innerWidth - margin_parameters.left - margin_parameters.right;
     const window_height = window.innerHeight - margin_parameters.top - margin_parameters.bottom;
-    const minZoom            = 0.2;
-    const maxZoom            = 1.05;
     let zScale = d3.scaleLinear()
                 .domain([0,100])
                 .range([minZoom,maxZoom]);
@@ -559,7 +562,7 @@ function initHeatmapData (){
             
 
         })
-        .scaleExtent([0.2, 1.05])
+        .scaleExtent([minZoom, maxZoom])
     ;
 
     d3.select(".chart").call(zoomv)
@@ -569,7 +572,7 @@ function initHeatmapData (){
         .on("touchmove.zoom", null)
         .on("touchend.zoom", null)
     ;
-    d3.select(".zcc").property("value",  50);
+    //d3.select(".zcc").property("value",  50);
 
     d3.select(".chart").call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(zScale(d3.select(".zcc").property("value"))));
 
@@ -644,7 +647,7 @@ function viz_ligths_on(){//it will loop by all the elements of the zoom chart an
 function onmouseover_function_labels(d){//Changing the cursor appearance 
     //switch everyone's opacity low, ligths out, with animation. 
     viz_ligths_on();
-    viz_ligths_dim();
+    //viz_ligths_dim();
     
     let tooltip = d3.select(".toolt");
     tooltip.attr("data-class",d3.select(this).attr("class"));
@@ -773,12 +776,6 @@ function InbetweenElements(x,y){
 //@param {object} selected_data the JSON tree filtered data
 //@return {void}  draws the interactive heatmap elements
 function updateGraph (){
-    const minZoom = 0.2;
-    const maxZoom = 1.05;
-    let zScale    = d3.scaleLinear()
-        .domain([0,100])
-        .range([minZoom,maxZoom])
-    ;
     let heatColor = d3.scaleOrdinal()
         .domain(['YES','PARTIAL','NO'])
         .range([d3.select(".rect0").style("fill"),d3.select(".rect1").style("fill"),d3.select(".rect2").style("fill")]);//takes them from the legend objects

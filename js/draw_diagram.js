@@ -118,17 +118,17 @@ function draw_content_container(general_parameters){
         .attr("id","fs1")
         .attr("class","fms form-control")//filter menu select
         .attr("name","filter")
-        .attr("data-filter","path")
+        .attr("data-filter","all")
     ;
     sidebar_form_group_select.append("option")
         .attr("class","fmdo")//option
         .attr("value","all")
+        .attr("selected","true")
         .text("All")
     ;
     sidebar_form_group_select.append("option")
         .attr("class","fmdo")//options
         .attr("value","path")
-        .attr("selected","true")
         .text("Pathways")
     ;
     sidebar_form_group_select.append("option")
@@ -286,16 +286,12 @@ function draw_content_container(general_parameters){
         })
     ;
     sidebar_form_group.append("hr");
-    //Drawing the Buttons
+    
+    //***********************Drawing the Buttons********************************
     let sidebar_buttons_form_group = sidebar_form_group.append("div")//side bar buttion
         .attr("class","form-group text-center")
     ;
-    /*sidebar_buttons_form_group.append("button")
-        .attr("id","update")
-        .attr("type","button")
-        .attr("class","btn btn btn-outline-primary btn-sm ub")   
-        .text("Update")
-    ;*/
+
     sidebar_buttons_form_group.append("button")
         .attr("type","button")
         .attr("class","btn btn-outline-secondary btn-sm rb")
@@ -319,6 +315,27 @@ function draw_content_container(general_parameters){
         })
     ;
     sidebar_form_group.append("hr");
+    
+    //***********************Drawing Zoom controls******************************
+    
+    let sidebar_zoom_control = sidebar_form_group.append("div")//side bar buttion
+        .attr("class","form-group")
+    ;
+    sidebar_zoom_control.append("label")
+        .attr("for","zc")//filter menu select filter select
+        .text("Zoom control")
+    ;
+    sidebar_zoom_control.append("input")
+        .attr("class","form-control zcc")
+        .attr("id","zc")
+        .attr("type","range")
+        .attr("min",0)
+        .attr("max",100)
+        .attr("value",80)
+    ;
+    d3.select(".zcc").property("value",  80);
+    
+    sidebar_form_group.append("hr");    
     //Drawing the select2 Search selector
     let sidebar_select2_search = sidebar_form_group
         .append("select")//navigationbar division select
@@ -335,24 +352,7 @@ function draw_content_container(general_parameters){
         .attr("label","Property Names")
         .attr("class","ndfso_names")
     ;
-    sidebar_form_group.append("hr");
-    //Drawing Zoom controls
-    let sidebar_zoom_control = sidebar_form_group.append("div")//side bar buttion
-        .attr("class","form-group")
-    ;
-    sidebar_zoom_control.append("label")
-        .attr("for","zc")//filter menu select filter select
-        .text("Zoom control")
-    ;
-    sidebar_zoom_control.append("input")
-        .attr("class","form-control zcc")
-        .attr("id","zc")
-        .attr("type","range")
-        .attr("min",0)
-        .attr("max",100)
-        .attr("value",50)
-    ;
-    
+
 }
 /**
  * Calculates the heatmap width
@@ -362,12 +362,6 @@ function draw_content_container(general_parameters){
  */
 function calculate_heatmap_width(heatmap_parameters, sample_names){
     // 1 character at font size 12 is 8 pixels, I want 30 characters 240pixels
-    //console.log("calculate_heatmap:",sample_names);
-    //const window_width         = window.innerWidth - margin_parameters["left"] - margin_parameters["right"];
-    //const window_height        = window.innerHeight - margin_parameters["top"] - margin_parameters["bottom"]; //- window.innerHeight * 0.4;
-    //let   wrapperWidth         = Math.min(window_width, window_height) ;   // like a rectangle with its longer side being half longer than its smaller side
-    //let   wrapperWidth         = sample_names.length*sample_square_size;//depends now on the total number of samples.
-    //let   heatmap_width        = wrapperWidth - (heatmap_parameters["Y_link_lenght"] + heatmap_parameters["link_margin"]);
     let   heatmap_width        = sample_names.length*heatmap_parameters.heatmap_sample_square_size;//depends now on the total number of samples.
     return(heatmap_width);
 }
@@ -424,12 +418,6 @@ function draw_heatmap(general_parameters,sample_names){
             //console.log(d3.select(".mct").property("scrollTop"));
             //Getting the reference of the last drawn page
             //Getting where I am 
-            const minZoom                           = 0.2;
-            const maxZoom                           = 1.05;
-            const zScale                            = d3.scaleLinear()
-                                                        .domain([0,100])
-                                                        .range([minZoom,maxZoom])
-                                                        ;
             const scale                             = zScale(d3.select(".zcc").property("value"));
             const svg_height_min                    = Math.round(parseInt(d3.select(".div_svg").attr("height"))*(1/scale)*minZoom);
             const mct_height                        = d3.select(".mct").node().getBoundingClientRect().height;
@@ -442,7 +430,7 @@ function draw_heatmap(general_parameters,sample_names){
                 if(i+1===page_number){
                     //fill the last element with the maximum size possible 
                     visible_node_max_threshold_vector.push(svg_height_min*(1/minZoom)*(scale));
-                }else{
+                }else{  
                     visible_node_max_threshold_vector.push(Math.floor((i+1)*(1/minZoom)*mct_height*(scale)));
                 }
                 i++;
@@ -606,7 +594,7 @@ function draw_heatmap(general_parameters,sample_names){
     //##########################################################################
             // this object is the window to see the target of the zoom.
             // remember to scale this up
-            
+    const scale                             = zScale(d3.select(".zcc").property("value"));
     let svg = dv
         .append("svg")
         .attr('transform', 'translate('+ (0) + ',' + (0) + ')')
@@ -616,8 +604,8 @@ function draw_heatmap(general_parameters,sample_names){
     ;
     let gZoom = svg.append("g")
         .attr("class","chart")
-        .attr("transform","scale(0.5)")
-        .attr("scale",0.5)
+        .attr("transform","scale("+scale+")")
+        .attr("scale",scale)
         .style("position","relative")
         .style("z-index","1001")
     ;
@@ -840,7 +828,8 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_yes")
                 .attr("data-color",this.value)
             ;
-            initHeatmapData();
+            //initHeatmapData();
+            updateGraph();
         })
     ;
     tt1_cy.append("label")
@@ -882,7 +871,8 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_partial")
                 .attr("data-color",this.value)
             ;
-            initHeatmapData();
+            //initHeatmapData();
+            updateGraph();
         })
         ;
     tt1_cp.append("label")
@@ -924,7 +914,8 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_no")
                 .attr("data-color",this.value)
             ;
-            initHeatmapData();
+            //initHeatmapData();
+            updateGraph();
         })
     ;
     tt1_cn.append("label")
@@ -1091,22 +1082,13 @@ function draw_sample_names(sample_names,general_parameters){
     let nodeSpaceX                   = heatmap_parameters.heatmap_sample_square_size;
     let GxNodes = d3.select(".xn")
     ;
-    //This rect is the gaussian blur to make the sample square visible when scrolling down. But, it is not working on firefox
-    /*GxNodes
-        .append('rect')
-            .attr('transform', 'translate('+ (0) + ',' + (8) + ')')// se divide entre dos para colocarlo en la mitad
-            .style("fill","white")
-            .style("opacity",0.7)
-        ;*/
+    //This rect is the gaussian blur to make the sample square visible when scrolling down.
     GxNodes
         .append("rect")
-        //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
+        .attr("class","GxNodes_background")
         .style("position","relative")
         .style("z-index","1000")
         .style("display","block")
-        .style("width",(heatmap_width+2)+"px")//heatmap widh
-        .style("height",heatmap_parameters.sample_name_height+"px")//sample height
-        .attr("transform", "translate(-2,5)")
         .style("fill","white")
         .style("opacity",0.7)
     ;
@@ -1143,6 +1125,12 @@ function draw_sample_names(sample_names,general_parameters){
             return(xNodeExit);
         }
     );
+    d3.select(".GxNodes_background")
+        .attr("width",d3.select(".xn").node().getBBox().width*1)
+        .attr("height",d3.select(".xn").node().getBBox().height*1)
+        .attr("transform","translate("+0+","+(heatmap_parameters["sample_name_height"]-d3.select(".GxNodes_background").attr("height")*1)+")")
+        //translate to 200 minus the height of the samples.
+    ;
 }
 
 
