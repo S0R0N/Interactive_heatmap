@@ -918,12 +918,12 @@ function updateGraph (){
                             if(d.height ===0){
                                 fw = "normal";
                             }else{
-                                fw = d.children ? "normal": "bold";
+                                fw = d.children ? "bold": "normal";
                             }
                             return (fw);
                         })
                         .style("font-style", function(d) {
-                            return (d.children ? "italic": "normal");
+                            return (d.children ? "bold": "normal");
                         })
                         .on('mouseover', onmouseover_function_labels)
                         .on('mouseout', onmouseout_function_labels)
@@ -943,13 +943,13 @@ function updateGraph (){
                             if(d.height ===0){
                                 fw = "normal";
                             }else{
-                                fw = d.children ? "normal": "bold";
+                                fw = d.children ? "bold": "normal";
                             }
                             return (fw);
                         })
                         .style("font-style", function(d) {
 
-                            return (d.children ? "italic": "normal");
+                            return (d.children ? "bold": "normal");
                         })
                         /*.text(function(d) {
                                 return truncateString(d.data.name,30);
