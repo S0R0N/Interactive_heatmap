@@ -6,12 +6,17 @@
  */
 
 
-//let back_end_url = "http://0.0.0.0:5000/";
-let back_end_url = "";
 let raw_data;      //global container for the JSON data tree object
 let selected_data;      //global container for the JSON data tree object
 let diagram_all_parameters; //global container for the diagram config file
 let loaded_micromeda_file = false; //global container for the diagram config file
+let back_end_url          = "";
+const minZoom             = 0.5;
+const maxZoom             = 1.2;
+const zScale                = d3.scaleLinear()
+    .domain([0,100])
+    .range([minZoom,maxZoom])
+;
 /**
  * Initialize the connection to the back-end and loads micromeda data
  *
@@ -20,15 +25,12 @@ let loaded_micromeda_file = false; //global container for the diagram config fil
  */
 
 $(document).ready(function () {
-	console.log("document ready start");
     
     $.getJSON('./configs/application_configuration.json', function (config) {
         back_end_url = config['back_end_url'];
 
         localforage.config({name: 'micromeda', storeName: 'micromeda_data'});
         localforage.getItem('micromeda-result-key').then(function (result_key) {
-			console.log("result_key");
-			console.log(result_key);
             if (result_key === null)
             {
                 // here the application speaks to the back-end (server), but it answers that there is no tree. So, I will pass it a Json tree inside the data folder. 
