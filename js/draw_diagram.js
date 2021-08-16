@@ -1094,13 +1094,9 @@ function draw_sample_names(sample_names,general_parameters){
     GxNodes
         .append("rect")
 		.attr("class","xn_background")
-        //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
         .style("position","relative")
         .style("z-index","1000")
         .style("display","block")
-        //.style("width",(heatmap_width+2)+"px")//heatmap widh
-        //.style("height",heatmap_parameters.sample_name_height+"px")//sample height
-        //.attr("transform", "translate(-2,5)")
         .style("fill","white")
         .style("opacity",0.7)
     ;
@@ -1136,11 +1132,16 @@ function draw_sample_names(sample_names,general_parameters){
             let xNodeExit = exit.remove();
             return(xNodeExit);
         }
-    );
-	d3.select(".xn_background")
-		.attr("width",d3.select(".xn").node().getBBox().width*1)
-		.attr("height",d3.select(".xnode0").node().getBBox().height*1)
-	;
+		
+	const xn_background_height = GxNodes.node().getBBox().height*1;
+	console.log("height of xn");
+	console.log(GxNodes.node().getBBox().height*1);
+	console.log("weight of xn");
+	console.log(xn_background_height);
+	/*d3.select(".xn_background")
+		.attr("width",GxNodes.node().getBBox().width*1)
+		.attr("height",xn_background_height)
+	;*/
 }
 
 
