@@ -330,7 +330,7 @@ function draw_content_container(general_parameters){
         .attr("max",100)
         .attr("value",80)
 		//modify the padding to cero
-		.attr("padding",0)
+		.style("padding",0)
     ;
     sidebar_form_group.append("hr");
     //Drawing the select2 Search selector

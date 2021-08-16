@@ -541,22 +541,6 @@ function initHeatmapData (){
             //
             //SCALING THE Y POSITION OF THE SCROLL BAR TO KEEP THE SCREEN ORIGINAL COORDINATE. BEFORE ZOOMING. 
             //d3.select(".mct").node().scrollTo(0, scrollRatio*d3.select(".mct").property("scrollHeight"));
-            /*console.log("scroll top sin escala invertida");
-            console.log((d3.select(".mct").node().scrollTop));
-            console.log("scroll top con escala invertida");
-            console.log((d3.select(".mct").node().scrollTop)*(1/d3.event.transform.k));
-            console.log("scroll top con escala");
-            console.log((d3.select(".mct").node().scrollTop)*(d3.event.transform.k));
-            console.log("zoom scroll ratio");
-            console.log(scrollRatio);
-            console.log("santi del pasado solucion");
-            console.log(scrollRatio*d3.select(".mct").property("scrollHeight"));
-            console.log("santi del pasado solucion con escala");
-            console.log(scrollRatio*d3.select(".mct").property("scrollHeight")*(d3.event.transform.k));*/
-            //d3.select(".mct").node().scrollTo(0, parseInt((d3.select(".mct").node().scrollTop)*(d3.event.transform.k)));
-            //d3.select(".mct").node().scrollTo(0, parseInt(scrollRatio*d3.select(".mct").property("scrollHeight")*(d3.event.transform.k)));
-            
-
         })
         .scaleExtent([minZoom, maxZoom])
     ;
@@ -568,7 +552,7 @@ function initHeatmapData (){
         .on("touchmove.zoom", null)
         .on("touchend.zoom", null)
     ;
-    d3.select(".zcc").property("value",  50);
+    d3.select(".zcc").property("value",  80);
     d3.select(".chart").call(zoomv.transform,d3.zoomIdentity.translate(0,0).scale(zScale(d3.select(".zcc").property("value"))));
 
     d3.select(".chart")
@@ -1110,74 +1094,6 @@ function updateGraph (){
         }
     );
     // ADD for each node an icon that will activate the extended metadata. 
-    /*let m_icon = d3.select(".metadata_icon_holder").selectAll('g.metadata_icon')
-        .data(nodes,function(d) {
-            return d.idx;
-        });
-    m_icon.join(
-        function(enter){
-            let iconEnter = enter.append('g')
-                .style('opacity', 1)
-                .attr('class',function(d) {return 'metadata_icon '+ d.idx;})
-                .attr('transform', function(d, i) {
-                    return 'translate(0, ' + ((d.nodeY)+ (d3.select(".div_svg").attr("data-nodeSpaceY")/4)) + ')';
-                    //return 'translate(0, ' + ((d.nodeY)) + ')';
-                })
-                .append('text')
-                    .attr('font-family', 'FontAwesome')
-                    .attr('class', function(d,i) { return 'metadata_icon_text'+i;} )
-                    .text(function(d) { return '\uf205' ;})
-                    .on("mouseover", function (hovered_tree_node) {
-                        //Activating the text
-                        d3.select(this)
-                                .text(function(d) { return '\uf204' ;})
-                                .style("cursor","pointer")
-                        ;
-                        let tooltip = d3.select(".toolt");
-                        tooltip.attr("data-class",d3.select(this).attr("class"));
-
-                        if(hovered_tree_node.data.property_id){
-
-                            generate_property_tooltip_html_content(tooltip, hovered_tree_node);
-                        }else{
-
-                            generate_step_tooltip_html_content(tooltip, hovered_tree_node);
-                        }
-                  })
-                  .on("mouseout", function () {
-                        //deactivating the metadata icon
-                        d3.select(this)
-                                .text(function(d) { return '\uf205' ;})
-                                .style("cursor","auto")
-                        ;
-                  });
-
-            ;  
-            iconEnter.transition()
-                .duration(d3.select(".yn").attr("data-intro_animation_time"))
-                    .style('opacity', 1)
-            ;
-            return(iconEnter);
-        },
-        function(update){
-            let iconUpdate = update;
-                iconUpdate
-                    .transition()
-                        .duration(1500)
-                        .attr('transform', function(d, i) {
-                            //return 'translate(0, ' + (d.nodeY + (d3.select(".div_svg").attr("data-nodeSpaceY")/2)) + ')';
-                            return 'translate(0, ' + ((d.nodeY)+ (d3.select(".div_svg").attr("data-nodeSpaceY")/4)) + ')';
-                        })
-                        .style('opacity', 1)
-                        ;
-
-            return(iconUpdate);
-        },
-        function(exit){
-            let iconExit = exit.remove();
-            return(iconExit);
-        }
-    );*/
 
     
     if (!loaded_micromeda_file){
