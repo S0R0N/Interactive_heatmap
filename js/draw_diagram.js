@@ -1092,7 +1092,8 @@ function draw_sample_names(sample_names,general_parameters){
             .style("opacity",0.7)
         ;*/
     GxNodes
-        .append("rect")
+        .append("rect
+		.attr("class","xn_background")
         //.attr('transform', 'translate('+ (0) + ',' + (0) + ')')// se divide entre dos para colocarlo en la mitad
         .style("position","relative")
         .style("z-index","1000")
@@ -1136,6 +1137,10 @@ function draw_sample_names(sample_names,general_parameters){
             return(xNodeExit);
         }
     );
+	d3.select(".xn_background")
+		.attr("width",d3.select(".xn").node().getBBox().width*1)
+		.attr("height",d3.select(".xn").node().getBBox().height*1)
+	;
 }
 
 
