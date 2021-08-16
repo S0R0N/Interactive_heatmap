@@ -941,7 +941,7 @@ function updateGraph (){
                         .style("font-weight", function(d) {
                             let fw = "normal";
                             if(d.height ===0){
-                                fw = "bold";
+                                fw = "normal";
                             }else{
                                 fw = d.children ? "bold": "normal";
                             }
