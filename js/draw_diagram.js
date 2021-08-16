@@ -123,12 +123,12 @@ function draw_content_container(general_parameters){
     sidebar_form_group_select.append("option")
         .attr("class","fmdo")//option
         .attr("value","all")
+		.attr("selected","true")
         .text("All")
     ;
     sidebar_form_group_select.append("option")
         .attr("class","fmdo")//options
         .attr("value","path")
-        .attr("selected","true")
         .text("Pathways")
     ;
     sidebar_form_group_select.append("option")
@@ -239,6 +239,7 @@ function draw_content_container(general_parameters){
     let GLegends = legends.selectAll(".leg")
             .data(legends_parameters['color_scale_domain'])
     ;
+	//HERE I can update the color customization
     GLegends.join(
         function(enter){
             let GLegendsEnter = enter.append("g")
@@ -290,12 +291,6 @@ function draw_content_container(general_parameters){
     let sidebar_buttons_form_group = sidebar_form_group.append("div")//side bar buttion
         .attr("class","form-group text-center")
     ;
-    /*sidebar_buttons_form_group.append("button")
-        .attr("id","update")
-        .attr("type","button")
-        .attr("class","btn btn btn-outline-primary btn-sm ub")   
-        .text("Update")
-    ;*/
     sidebar_buttons_form_group.append("button")
         .attr("type","button")
         .attr("class","btn btn-outline-secondary btn-sm rb")
@@ -334,6 +329,8 @@ function draw_content_container(general_parameters){
         .attr("min",0)
         .attr("max",100)
         .attr("value",80)
+		//modify the padding to cero
+		.attr("padding",0)
     ;
     sidebar_form_group.append("hr");
     //Drawing the select2 Search selector

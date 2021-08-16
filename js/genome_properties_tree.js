@@ -426,6 +426,10 @@ function initHeatmapData (){
             selected_data     = all_data;
             selected_data.descendants().slice(1).forEach(expand);
             place_holder_text = "Search all functions here";
+			d3.select(".fry").attr("disabled","true");
+            d3.select(".frp").attr("disabled","true");
+            d3.select(".frn").attr("disabled","true");
+            d3.select(".frs").attr("disabled","true");
         break;
         case "path":
             selected_data     = pathway_data;
@@ -514,11 +518,6 @@ function initHeatmapData (){
     //**************************************************************
     const window_width  = window.innerWidth - margin_parameters.left - margin_parameters.right;
     const window_height = window.innerHeight - margin_parameters.top - margin_parameters.bottom;
-    const minZoom            = 0.5;
-    const maxZoom            = 1.1;
-    let zScale = d3.scaleLinear()
-                .domain([0,100])
-                .range([minZoom,maxZoom]);
     let zoomv =  d3.zoom()
         .on("zoom", function () {
             //UPDATE ZOOM BAR
