@@ -1134,6 +1134,7 @@ function draw_sample_names(sample_names,general_parameters){
         }
 	)
 	const xn_background_height = GxNodes.node().getBBox().height*1;
+	const xn_background_y_pos  = heatmap_parameters["sample_name_height"] - xn_background_height;
 	console.log("width of xn");
 	console.log(GxNodes.node().getBBox().width*1);
 	console.log("height of xn");
@@ -1141,6 +1142,7 @@ function draw_sample_names(sample_names,general_parameters){
 	d3.select(".xn_background")
 		.attr("width",GxNodes.node().getBBox().width*1)
 		.attr("height",xn_background_height)
+		.attr("transform","translate("+(0)+","+(xn_background_y_pos)+")")
 	;
 }
 
