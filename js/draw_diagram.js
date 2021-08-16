@@ -1132,7 +1132,7 @@ function draw_sample_names(sample_names,general_parameters){
             let xNodeExit = exit.remove();
             return(xNodeExit);
         }
-		
+	)
 	const xn_background_height = GxNodes.node().getBBox().height*1;
 	console.log("height of xn");
 	console.log(GxNodes.node().getBBox().height*1);
