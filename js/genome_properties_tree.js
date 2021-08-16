@@ -772,12 +772,7 @@ function InbetweenElements(x,y){
 //@param {object} selected_data the JSON tree filtered data
 //@return {void}  draws the interactive heatmap elements
 function updateGraph (){
-    const minZoom = 0.5;
-    const maxZoom = 1.1;
-    let zScale    = d3.scaleLinear()
-        .domain([0,100])
-        .range([minZoom,maxZoom])
-    ;
+    
     let heatColor = d3.scaleOrdinal()
         .domain(['YES','PARTIAL','NO'])
         .range([d3.select(".rect0").style("fill"),d3.select(".rect1").style("fill"),d3.select(".rect2").style("fill")]);//takes them from the legend objects

@@ -423,12 +423,6 @@ function draw_heatmap(general_parameters,sample_names){
             //console.log(d3.select(".mct").property("scrollTop"));
             //Getting the reference of the last drawn page
             //Getting where I am 
-            const minZoom                           = 0.5;
-            const maxZoom                           = 1.1;
-            const zScale                            = d3.scaleLinear()
-                                                        .domain([0,100])
-                                                        .range([minZoom,maxZoom])
-                                                        ;
             const scale                             = zScale(d3.select(".zcc").property("value"));
             const svg_height_min                    = Math.round(parseInt(d3.select(".div_svg").attr("height"))*(1/scale)*minZoom);
             const mct_height                        = d3.select(".mct").node().getBoundingClientRect().height;
@@ -607,12 +601,6 @@ function draw_heatmap(general_parameters,sample_names){
             // remember to scale this up
 			
 	
-    const minZoom                           = 0.5;
-    const maxZoom                           = 1.1;
-    const zScale                            = d3.scaleLinear()
-                                                        .domain([0,100])
-                                                        .range([minZoom,maxZoom])
-                                                        ;
     const scale                             = zScale(d3.select(".zcc").property("value"));
             
     let svg = dv
@@ -1112,9 +1100,9 @@ function draw_sample_names(sample_names,general_parameters){
         .style("position","relative")
         .style("z-index","1000")
         .style("display","block")
-        .style("width",(heatmap_width+2)+"px")//heatmap widh
-        .style("height",heatmap_parameters.sample_name_height+"px")//sample height
-        .attr("transform", "translate(-2,5)")
+        //.style("width",(heatmap_width+2)+"px")//heatmap widh
+        //.style("height",heatmap_parameters.sample_name_height+"px")//sample height
+        //.attr("transform", "translate(-2,5)")
         .style("fill","white")
         .style("opacity",0.7)
     ;
