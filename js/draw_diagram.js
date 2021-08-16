@@ -1134,14 +1134,14 @@ function draw_sample_names(sample_names,general_parameters){
         }
 	)
 	const xn_background_height = GxNodes.node().getBBox().height*1;
+	console.log("width of xn");
+	console.log(GxNodes.node().getBBox().width*1);
 	console.log("height of xn");
-	console.log(GxNodes.node().getBBox().height*1);
-	console.log("weight of xn");
 	console.log(xn_background_height);
-	/*d3.select(".xn_background")
+	d3.select(".xn_background")
 		.attr("width",GxNodes.node().getBBox().width*1)
 		.attr("height",xn_background_height)
-	;*/
+	;
 }
 
 
