@@ -833,7 +833,7 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_yes")
                 .attr("data-color",this.value)
             ;
-            initHeatmapData();
+            updateGraph();
         })
     ;
     tt1_cy.append("label")
@@ -875,7 +875,7 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_partial")
                 .attr("data-color",this.value)
             ;
-            initHeatmapData();
+            updateGraph();
         })
         ;
     tt1_cp.append("label")
@@ -917,7 +917,7 @@ function draw_tool_tips(general_content_parameters){
             d3.select(".tool_tip_color_no")
                 .attr("data-color",this.value)
             ;
-            initHeatmapData();
+            updateGraph();
         })
     ;
     tt1_cn.append("label")
