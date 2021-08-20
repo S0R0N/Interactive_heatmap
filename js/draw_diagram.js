@@ -222,19 +222,18 @@ function draw_content_container(general_parameters){
         .range(legends_parameters['color_scale_range']);
     ;
     let legend_menu = sidebar_form_group.append("div")
+        .attr("class","form-group")
     ;
     legend_menu.append("label")
                 .attr("for","sdbf_c")//filter menu select filter select
                 .text("Click the legends to change color")
             ;
-    let legends = legend_menu.append('svg')
+    //let legends = legend_menu.append('svg')
+    let legends = legend_menu.append('div')
         .attr("id","sdbf_c")
         .attr("width",legends_parameters['legend_menu_width'])
         .attr("height",legends_parameters['legend_menu_height'])
         .style("vertical-align", legends_parameters['legend_menu_vertical-align'])
-        .append("g")
-            .attr('class', 'legends')
-            .attr('transform', 'translate('+ (0) + ',' + (0) + ')')
     ;
     let GLegends = legends.selectAll(".leg")
             .data(legends_parameters['color_scale_domain'])
@@ -242,48 +241,49 @@ function draw_content_container(general_parameters){
 	//HERE I can update the color customization
     GLegends.join(
         function(enter){
-            let GLegendsEnter = enter.append("g")
-                .attr('class', 'leg')
-                .attr('transform', 'translate(' + (0) + ',' + (0) + ')')
-                .style("vertical-align", "middle")
-                .on("click",function(d,i){
-                    if(d3.select(".c"+i).style("visibility")==="hidden"){
-                        d3.select(".c"+i)
-                            .style("visibility","visible")
-                            .style("top",(this.getBoundingClientRect().top-3)+"px")
-                            .style("left",120+"px")
-                        ;
-                    }else{
-                        d3.select(".c"+i)
-                            .style("visibility","hidden");
-                    }
+        let GLegends_div_Enter = enter
+                .append("div")
+                .attr("class","form-group row")
+        ;
+        GLegends_div_Enter.append("label")
+            .attr("for",function(d,i){
+              return "rect"+i;  
+            })//filter menu select filter select
+            .attr("class","col-form-label col-sm-4")
+            .style("font-size","12px")
+            .text(d =>d)
+        ;
+        GLegends_div_Enter
+                .append("input")
+                .attr("id",function(d,i){
+                  return "rect"+i;  
                 })
-            ;
-            GLegendsEnter.append("rect")
                 .attr("class",function(d,i){
-                    return "rect"+i;
+                  return "leg rect"+i;  
                 })
+                .attr("type","color")
+                .attr("data-color",function(d,i) {
+                        return (legends_parameters["color_scale_range"][i]);
+                    })
+                .attr("value",function(d,i) {
+                    return (legends_parameters["color_scale_range"][i]);
+                    })
                 .attr("height",legends_parameters['legend_square_height'])
                 .attr("width",legends_parameters['legend_square_height'])
-                .style("stroke", "grey")
-                .style("stroke-width", 1)
-                .attr("x",0)
-                .attr("y",function(d,i) {
-                        return ((i*legends_parameters['legend_square_height'])+10);
-                    }
-                )
-                .attr("fill",d => heatColor(d))
+                //.attr("fill",d => heatColor(d))
+                .style("fill",d => heatColor(d))
+                .on("change",function(){
+                    //change color of the respective legend 
+                     d3.select(this)
+                          .style("fill",this.value);
+                     ;
+                     d3.select(this)
+                         .attr("data-color",this.value)
+                     ;
+                     updateGraph();
+                 })
             ;
-            GLegendsEnter.append("text")    
-                .attr("x", legends_parameters['legend_square_height']+5)
-                .style("font-size","12px")
-                .attr("y",function(d,i) {
-                        return ((i*legends_parameters['legend_square_height'])+((legends_parameters['legend_square_height'])*(3/4))+10 );
-                    }
-                )
-                .text(d =>d)
-            ;
-            return(GLegendsEnter);
+            return(GLegends_div_Enter);
         })
     ;
     sidebar_form_group.append("hr");

@@ -29,7 +29,7 @@
             },
             "legends":{
                 "color_scale_domain":["YES","PARTIAL","NO"],
-                "color_scale_range":["#6c6c6c","#cecece","white"],
+                "color_scale_range":["#6c6c6c","#cecece","#FFFFFF"],
                 "legend_menu_width":"100%",
                 "legend_menu_height":80,
                 "legend_menu_vertical-align":"middle",
@@ -38,7 +38,7 @@
         },
     "heatmap":
         {
-            "Y_link_lenght":40,
+            "Y_link_lenght":80,
             "heatmap_icon_container_width":20,
             "heatmap_controls_left_margin":20,
             "heatmap_controls_margin":5,

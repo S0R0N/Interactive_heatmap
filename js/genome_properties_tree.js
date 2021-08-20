@@ -426,7 +426,7 @@ function initHeatmapData (){
             selected_data     = all_data;
             selected_data.descendants().slice(1).forEach(expand);
             place_holder_text = "Search all functions here";
-			d3.select(".fry").attr("disabled","true");
+	    d3.select(".fry").attr("disabled","true");
             d3.select(".frp").attr("disabled","true");
             d3.select(".frn").attr("disabled","true");
             d3.select(".frs").attr("disabled","true");
@@ -906,24 +906,21 @@ function updateGraph (){
                         })
                         .style('fill', "white")
                         .attr("font-family", " Arial, sans-serif")
-                        .attr("font-size", 12)
-                        //.attr("width", 240
-                        .text(d => d.data.name)
-                        /*.text(function(d) {
-                                return truncateString(d.data.name,30);
+                        .attr("font-size", function(d){
+                                console.log("d");
+                                console.log(d);
+                                return (15-(d.depth)*1.2);
                             }
-                        )*/
+                        )
+                        .text(d => d.data.name)
                         .style("font-weight", function(d) {
                             let fw = "normal";
                             if(d.height ===0){
-                                fw = "bold";
+                                fw = "normal";
                             }else{
-                                fw = d.children ? "bold": "normal";
+                                fw = (d.children || d._children) ? "bold": "normal";
                             }
                             return (fw);
-                        })
-                        .style("font-style", function(d) {
-                            return (d.children ? "bold": "normal");
                         })
                         .on('mouseover', onmouseover_function_labels)
                         .on('mouseout', onmouseout_function_labels)
@@ -943,18 +940,10 @@ function updateGraph (){
                             if(d.height ===0){
                                 fw = "normal";
                             }else{
-                                fw = d.children ? "bold": "normal";
+                                fw = (d.children || d._children) ? "bold": "normal";
                             }
                             return (fw);
                         })
-                        .style("font-style", function(d) {
-
-                            return (d.children ? "bold": "normal");
-                        })
-                        /*.text(function(d) {
-                                return truncateString(d.data.name,30);
-                            }
-                        )*/
                         .text(d => d.data.name)
                         .on('mouseover', onmouseover_function_labels)
                         .on('mouseout', onmouseout_function_labels)
