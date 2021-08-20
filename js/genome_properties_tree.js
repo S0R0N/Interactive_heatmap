@@ -1090,6 +1090,8 @@ function updateGraph (){
     }else{
         console.log("I loaded a micromeda file, check if we have to draw the download icons");
         downloadable_steps.push(nodes.filter(is_node_downloadable));
+		console.log("downloadable_steps");
+		console.log(downloadable_steps);
 
         let d_icon = d3.select(".download_icon_holder").selectAll('.download_icon')
             .data(downloadable_steps[0],function(d) {
