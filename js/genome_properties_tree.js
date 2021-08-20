@@ -1088,7 +1088,7 @@ function updateGraph (){
     if (!loaded_micromeda_file){
         console.log("no micromeda file loaded, can not download properties");
     }else{
-//        console.log("I loaded a micromeda file, check if we have to draw the download icons");
+        console.log("I loaded a micromeda file, check if we have to draw the download icons");
         downloadable_steps.push(nodes.filter(is_node_downloadable));
 
         let d_icon = d3.select(".download_icon_holder").selectAll('.download_icon')
